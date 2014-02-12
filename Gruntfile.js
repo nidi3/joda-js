@@ -1,7 +1,25 @@
 module.exports = function (grunt) {
+    var JASMINE_DIR = 'test-jasmine',
+        JASMINE_PORT = 9999,
+        DIST_DIR = 'dist',
+
+        browsers = [
+            {browserName: "internet explorer", version: "6", platform: "XP"},
+            {browserName: "internet explorer", version: "7", platform: "XP"},
+            {browserName: "internet explorer", version: "8", platform: "XP"},
+            {browserName: "internet explorer", version: "9", platform: "windows 7"},
+            {browserName: "internet explorer", version: "10", platform: "windows 7"},
+            {browserName: "internet explorer", version: "11", platform: "windows 8.1"},
+            {browserName: "firefox", version: "3.0", platform: "XP"},
+            {browserName: "firefox", version: "4", platform: "os x 10.6"},
+            {browserName: "safari", version: "5", platform: "os x 10.6"},
+            {browserName: "chrome", version: "26", platform: "linux"}
+        ];
+
+
     grunt.initConfig({
         clean: {
-            src: ['bower_components', 'dist', 'test-jasmine/spec', 'test-jasmine/lib']
+            src: ['bower_components', DIST_DIR, JASMINE_DIR + '/spec', JASMINE_DIR + '/lib']
         },
         bower: {
             init: {
@@ -14,7 +32,7 @@ module.exports = function (grunt) {
         concat: {
             dist: {
                 src: ['src/init.js', 'src/DateTimeUtils.js'],
-                dest: 'dist/joda-js.js'
+                dest: DIST_DIR + '/joda-js.js'
             }
         },
 
@@ -29,7 +47,7 @@ module.exports = function (grunt) {
             server: {
                 options: {
                     base: "",
-                    port: 9999
+                    port: JASMINE_PORT
                 }
             }
         },
@@ -37,17 +55,11 @@ module.exports = function (grunt) {
         'saucelabs-jasmine': {
             all: {
                 options: {
-                    urls: ["http://127.0.0.1:9999/test-jasmine/SpecRunner.html"],
+                    urls: ['http://127.0.0.1:' + JASMINE_PORT + '/' + JASMINE_DIR + '/SpecRunner.html'],
                     tunnelTimeout: 5,
                     build: process.env.TRAVIS_JOB_ID,
                     concurrency: 3,
-                    browsers: [
-                        {
-                            browserName: "firefox",
-                            version: "19",
-                            platform: "XP"
-                        }
-                    ],
+                    browsers: browsers,
                     testname: "General tests",
                     tags: ["master"]
                 }
@@ -59,13 +71,13 @@ module.exports = function (grunt) {
                 expand: true,
                 cwd: 'bower_components/jasmine/',
                 src: 'lib/jasmine-core/*.*',
-                dest: 'test-jasmine'
+                dest: JASMINE_DIR
             },
             test: {
                 expand: true,
                 cwd: 'test/',
                 src: '**/*.js',
-                dest: 'test-jasmine/spec/'
+                dest: JASMINE_DIR + '/spec/'
             }
         },
 
@@ -75,10 +87,10 @@ module.exports = function (grunt) {
                     startTag: '<!-- include spec files here... -->',
                     endTag: '  <!-- end spec files -->',
                     fileTmpl: '<script src="%s"></script>',
-                    appRoot: 'test-jasmine/'
+                    appRoot: JASMINE_DIR
                 },
                 files: {
-                    'test-jasmine/SpecRunner.html': ['test-jasmine/spec/**/*.js']
+                    'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/**/*.js']
                 }
             }
         }
