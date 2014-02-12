@@ -1,7 +1,9 @@
+env: 
+  global: 
+  - secure: YqbTG0nJMM1pMwjWzGJpwXQ7yb1gF2Ms8IBcw7qc9FFnZU/T1+GUK+D5kG5OrjiNeCRcwJoFgUmU44vTT5Vi2aaUPbFC88vhHNDXof1Q5rkrEqm3enkAGkoWe0rx0pnEOWkZXDBFcoW7cm2CvWnIraS5gc++AF7lThhs3wNQEro=
+  - secure: wnkqf998Cgp472rTerSOBAXsHI80PserhoMjizcz0yWGncSVuDFnDzXqHiN5F99OTe69NnXZHCrEI3mRS6fD3GM7ZkRutzUMkVQ1I8G5DBxV53ltIDAP2D23vm7sceOWAAAWkEOXpbL6Pi8qPsJ8bDIoqUYk1Ax+AcEM6YEBJvk=
 language: node_js
-node_js:
-  - 0.8
-before_script:
-  - export DISPLAY=:99.0
-  - sh -e /etc/init.d/xvfb start
-
+node_js: 
+- 0.1
+before_script: 
+- npm install -g grunt-cli
