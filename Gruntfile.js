@@ -85,9 +85,9 @@ module.exports = function (grunt) {
             defaultOptions: {
                 options: {
                     startTag: '<!-- include spec files here... -->',
-                    endTag: '  <!-- end spec files -->',
+                    endTag: '<!-- end spec files -->',
                     fileTmpl: '<script src="%s"></script>',
-                    appRoot: JASMINE_DIR
+                    appRoot: JASMINE_DIR + '/'
                 },
                 files: {
                     'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/**/*.js']
