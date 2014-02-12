@@ -93,5 +93,5 @@ module.exports = function (grunt) {
     grunt.registerTask('default', []);
     grunt.registerTask('dist', ['concat']);
     grunt.registerTask('dev', ['watch']);
-    grunt.registerTask("full-test", ['dist', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect', 'saucelabs-jasmine']);
+    grunt.registerTask('test', ['dist', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect', 'saucelabs-jasmine']);
 };
