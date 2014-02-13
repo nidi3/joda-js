@@ -53,6 +53,10 @@ jodajs.LocalDate = function (year, month, dayOfMonth) {
         return day === 0 ? 7 : day;
     };
     this.withDayOfWeek = function (dayOfWeek) {
+        console.log(this.date);
+        console.log(dayOfWeek - this.getDayOfWeek());
+        console.log(this.getLocalMillis());
+        console.log(this.getLocalMillis() + (dayOfWeek - this.getDayOfWeek()) * DAY_IN_MILLIS);
         return this.plusDays(dayOfWeek - this.getDayOfWeek());
     };
 
