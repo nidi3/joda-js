@@ -31,7 +31,7 @@ module.exports = function (grunt) {
 
         concat: {
             dist: {
-                src: ['src/init.js', 'src/DateTimeUtils.js'],
+                src: ['src/init.js', 'src/DateTimeUtils.js', 'src/LocalDate.js'],
                 dest: DIST_DIR + '/joda-js.js'
             }
         },
@@ -40,6 +40,10 @@ module.exports = function (grunt) {
             dist: {
                 files: 'src/*.js',
                 tasks: 'dist'
+            },
+            test: {
+                files: 'test/*.js',
+                tasks: 'copy:test'
             }
         },
 
@@ -90,7 +94,7 @@ module.exports = function (grunt) {
                     appRoot: JASMINE_DIR + '/'
                 },
                 files: {
-                    'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/**/*.js']
+                    'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/**/*.js']
                 }
             }
         }
@@ -105,5 +109,7 @@ module.exports = function (grunt) {
     grunt.registerTask('default', []);
     grunt.registerTask('dist', ['concat']);
     grunt.registerTask('dev', ['watch']);
-    grunt.registerTask('test', ['init', 'dist', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect', 'saucelabs-jasmine']);
+    grunt.registerTask('test-prepare', ['init', 'dist', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect']);
+    grunt.registerTask('test-local', ['test-prepare', 'watch']);
+    grunt.registerTask('test', ['test-prepare', 'saucelabs-jasmine']);
 };

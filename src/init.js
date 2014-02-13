@@ -1,1 +1,1 @@
-var stni = stni || {jodajs: {}};
+var jodajs = jodajs || {};

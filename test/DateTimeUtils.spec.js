@@ -1,5 +1,6 @@
+/*global jodajs,describe,it,expect*/
 describe('DateTimeUtils', function () {
-    var Dtu = stni.jodajs.DateTimeUtils;
+    var Dtu = jodajs.DateTimeUtils;
 
     describe('currentTimeMillis', function () {
         it('should return the same as new Date() by default', function () {
@@ -18,5 +19,5 @@ describe('DateTimeUtils', function () {
             expect(Math.abs(Dtu.currentTimeMillis() - 10000)).toBeLessThan(10);
         });
 
-    })
+    });
 });

@@ -1,4 +1,5 @@
-stni.jodajs.DateTimeUtils = function () {
+/*globals jodajs*/
+jodajs.DateTimeUtils = (function () {
     var systemMillisProvider = {
             getMillis: function () {
                 return new Date().getTime();
@@ -37,4 +38,4 @@ stni.jodajs.DateTimeUtils = function () {
             cMillisProvider = provider;
         }
     };
-}();
+}());
