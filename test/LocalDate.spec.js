@@ -81,7 +81,7 @@ describe('LocalDate', function () {
         });
     });
 
-    describe('UTCnow', function () {
+    describe('nowUTC', function () {
         it('should construct a LocalDate from now in UTC', function () {
             DateTimeUtils.setCurrentMillisFixed(littleBefore(t2014_2_3) - zone);
             expect(LocalDate.nowUTC()).toEq(new LocalDate(2014, 2, 2));
@@ -131,6 +131,12 @@ describe('LocalDate', function () {
         });
     });
 
+    describe('withDayOfMonth', function () {
+        it('should return a new LocalDate with the given day of month', function () {
+            expect(new LocalDate(2000, 1, 1).withDayOfMonth(2)).toEq(new LocalDate(2000, 1, 2));
+        });
+    });
+
     describe('getDayOfWeek', function () {
         it('should return day of week (1=monday,...,7=sunday)', function () {
             expect(new LocalDate(2014, 2, 10).getDayOfWeek()).toBe(1);
@@ -144,6 +150,14 @@ describe('LocalDate', function () {
         });
     });
 
+    describe('withDayOfWeek', function () {
+        it('should return a new LocalDate with the given day of week', function () {
+            expect(new LocalDate(2014, 2, 13).withDayOfWeek(1)).toEq(new LocalDate(2014, 2, 10));
+            expect(new LocalDate(2014, 2, 13).withDayOfWeek(7)).toEq(new LocalDate(2014, 2, 16));
+        });
+    });
+
+
     describe('getDayOfYear', function () {
         it('should return day of year', function () {
             expect(new LocalDate(2014, 1, 1).getDayOfYear()).toBe(1);
@@ -155,6 +169,14 @@ describe('LocalDate', function () {
         });
     });
 
+    describe('withDayOfYear', function () {
+        it('should return a new LocalDate with the given day of year', function () {
+            expect(new LocalDate(2001, 5, 16).withDayOfYear(2)).toEq(new LocalDate(2001, 1, 2));
+            expect(new LocalDate(2001, 10, 7).withDayOfYear(364)).toEq(new LocalDate(2001, 12, 30));
+        });
+    });
+
+
     describe('getMonthOfYear', function () {
         it('should return month of year', function () {
             expect(new LocalDate(2014, 1, 1).getMonthOfYear()).toBe(1);
@@ -162,10 +184,24 @@ describe('LocalDate', function () {
         });
     });
 
+    describe('withMonthOfYear', function () {
+        it('should return a new LocalDate with the given month of year', function () {
+            expect(new LocalDate(2001, 6, 16).withMonthOfYear(2)).toEq(new LocalDate(2001, 2, 16));
+            expect(new LocalDate(2001, 1, 31).withMonthOfYear(2)).toEq(new LocalDate(2001, 2, 28));
+        });
+    });
+
     describe('getYear', function () {
         it('should return year', function () {
             expect(new LocalDate(2014, 1, 1).getYear()).toBe(2014);
             expect(new LocalDate(2014, 12, 31).getYear()).toBe(2014);
+        });
+    });
+
+    describe('withYear', function () {
+        it('should return a new LocalDate with the given year', function () {
+            expect(new LocalDate(2004, 2, 29).withYear(2008)).toEq(new LocalDate(2008, 2, 29));
+            expect(new LocalDate(2004, 2, 29).withYear(2005)).toEq(new LocalDate(2005, 2, 28));
         });
     });
 
@@ -228,6 +264,12 @@ describe('LocalDate', function () {
             expect(new LocalDate(2014, 2, 9).minusYears(1)).toEq(new LocalDate(2013, 2, 9));
             expect(new LocalDate(2016, 2, 29).minusYears(1)).toEq(new LocalDate(2015, 2, 28));
             expect(new LocalDate(2016, 2, 29).minusYears(4)).toEq(new LocalDate(2012, 2, 29));
+        });
+    });
+
+    describe('toDate', function () {
+        it('should return a Date with the same fields as the LocalDate and time set to 0', function () {
+            expect(new LocalDate(2014, 2, 9).toDate()).toEqual(new Date(2014, 1, 9, 0, 0, 0, 0));
         });
     });
 });

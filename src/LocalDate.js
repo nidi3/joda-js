@@ -1,5 +1,5 @@
 /*globals jodajs*/
-jodajs.LocalDate = function (year, month, day) {
+jodajs.LocalDate = function (year, month, dayOfMonth) {
     var DAY_IN_MILLIS = (1000 * 60 * 60 * 24);
 
     function normalizedDay(year, month, day) {
@@ -7,10 +7,14 @@ jodajs.LocalDate = function (year, month, day) {
         return (d.getDayOfMonth() < day) ? d.minusDays(d.getDayOfMonth()) : d;
     }
 
+    function endOfLastYearMillis(year) {
+        return new jodajs.LocalDate(year - 1, 12, 31).getLocalMillis();
+    }
+
     this.date = new Date();
     this.date.setUTCFullYear(year);
     this.date.setUTCMonth(month - 1);
-    this.date.setUTCDate(day);
+    this.date.setUTCDate(dayOfMonth);
     this.date.setUTCHours(0);
     this.date.setUTCMinutes(0);
     this.date.setUTCSeconds(0);
@@ -40,21 +44,37 @@ jodajs.LocalDate = function (year, month, day) {
         return this.date.getUTCDate();
     };
 
+    this.withDayOfMonth = function (dayOfMonth) {
+        return new jodajs.LocalDate(this.getYear(), this.getMonthOfYear(), dayOfMonth);
+    };
+
     this.getDayOfWeek = function () {
         var day = this.date.getUTCDay();
         return day === 0 ? 7 : day;
     };
+    this.withDayOfWeek = function (dayOfWeek) {
+        return this.plusDays(dayOfWeek - this.getDayOfWeek());
+    };
 
     this.getDayOfYear = function () {
-        return 1 + (this.getLocalMillis() - new jodajs.LocalDate(this.getYear(), 1, 1).getLocalMillis()) / DAY_IN_MILLIS;
+        return (this.getLocalMillis() - endOfLastYearMillis(this.getYear())) / DAY_IN_MILLIS;
+    };
+    this.withDayOfYear = function (dayOfYear) {
+        return jodajs.LocalDate.fromMillis(endOfLastYearMillis(this.getYear()) + dayOfYear * DAY_IN_MILLIS);
     };
 
     this.getYear = function () {
         return this.date.getUTCFullYear();
     };
+    this.withYear = function (year) {
+        return normalizedDay(year, this.getMonthOfYear(), this.getDayOfMonth());
+    };
 
     this.getMonthOfYear = function () {
         return this.date.getUTCMonth() + 1;
+    };
+    this.withMonthOfYear = function (monthOfYear) {
+        return normalizedDay(this.getYear(), monthOfYear, this.getDayOfMonth());
     };
 
     this.getLocalMillis = function () {
@@ -101,6 +121,10 @@ jodajs.LocalDate = function (year, month, day) {
     };
     this.minusYears = function (years) {
         return this.plusYears(-years);
+    };
+
+    this.toDate = function () {
+        return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth());
     };
 };
 
