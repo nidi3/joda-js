@@ -2,6 +2,7 @@ module.exports = function (grunt) {
     var JASMINE_DIR = 'test-jasmine',
         JASMINE_PORT = 9999,
         DIST_DIR = 'dist',
+        SOURCES = ['src/init.js', 'src/DateTimeUtils.js', 'src/LocalDate.js'],
 
         browsers = [
             {browserName: "internet explorer", version: "6", platform: "XP"},
@@ -31,8 +32,19 @@ module.exports = function (grunt) {
 
         concat: {
             dist: {
-                src: ['src/init.js', 'src/DateTimeUtils.js', 'src/LocalDate.js'],
+                src: SOURCES,
                 dest: DIST_DIR + '/joda-js.js'
+            }
+        },
+
+        uglify: {
+            dist: {
+                files: {
+                    'dist/joda-js.min.js': SOURCES
+                },
+                options: {
+                    report: 'gzip'
+                }
             }
         },
 
@@ -62,10 +74,14 @@ module.exports = function (grunt) {
                     urls: ['http://127.0.0.1:' + JASMINE_PORT + '/' + JASMINE_DIR + '/SpecRunner.html'],
                     tunnelTimeout: 5,
                     build: process.env.TRAVIS_JOB_ID,
-                    concurrency: 3,
                     browsers: browsers,
                     testname: "General tests",
-                    tags: ["master"]
+                    tags: ["master"],
+                    onTestComplete: function (result) {
+                        result.result.logs.forEach(function (log) {
+                            grunt.log.ok(JSON.stringify(log));
+                        });
+                    }
                 }
             }
         },
@@ -107,7 +123,7 @@ module.exports = function (grunt) {
 
     grunt.registerTask('init', ['clean', 'bower:init']);
     grunt.registerTask('default', []);
-    grunt.registerTask('dist', ['concat']);
+    grunt.registerTask('dist', ['concat', 'uglify:dist']);
     grunt.registerTask('dev', ['watch']);
     grunt.registerTask('test-prepare', ['init', 'dist', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect']);
     grunt.registerTask('test-local', ['test-prepare', 'watch']);

@@ -27,6 +27,20 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
+console={
+    logs:[],
+    log:function(){
+        for(var i=0;i<arguments.length;i++){
+            console.logs.push(arguments[i]);
+        }
+    },
+    getLogs:function(){
+        var old=console.logs;
+        console.logs=[];
+        return old;
+    }
+};
+
 (function () {
     // Ensure that Jasmine library is loaded first
     if (typeof jasmine === "undefined") {
@@ -143,6 +157,7 @@
 
             // Attach results to the "jasmine" object to make those results easy to scrap/find
             jasmine.runnerResults = {
+                logs:console.getLogs(),
                 suites: [],
                 durationSec : 0,
                 passed : true
