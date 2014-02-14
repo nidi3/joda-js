@@ -1,5 +1,5 @@
 /*globals jodajs*/
-jodajs.LocalDate = function (year, month, dayOfMonth) {
+jodajs.LocalDate = function (year, monthOfYear, dayOfMonth) {
     var LocalDate = this.constructor,
         DAY_IN_MILLIS = (1000 * 60 * 60 * 24);
 
@@ -21,16 +21,16 @@ jodajs.LocalDate = function (year, month, dayOfMonth) {
         return normalizedDay(year, month, localDate.getDayOfMonth());
     }
 
-    function init(year, month, dayOfMonth) {
+    function init() {
         var date = new Date(0);
         date.setUTCFullYear(year);
-        date.setUTCMonth(month - 1);
+        date.setUTCMonth(monthOfYear - 1);
         date.setUTCDate(dayOfMonth);
         return date;
     }
 
     return {
-        date: init(year, month, dayOfMonth),
+        date: init(),
 
         isEqual: function (other) {
             return this.compareTo(other) === 0;
