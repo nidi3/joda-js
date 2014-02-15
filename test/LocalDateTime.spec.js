@@ -228,7 +228,7 @@ describe('LocalDateTime', function () {
 
     describe('getDayOfYear', function () {
         it('should return day of year', function () {
-            expect(new LocalDateTime(2014, 1, 1).getDayOfYear()).toBe(1);
+            expect(new LocalDateTime(2014, 1, 1, 3, 4, 5, 6).getDayOfYear()).toBe(1);
             expect(new LocalDateTime(2014, 2, 1).getDayOfYear()).toBe(32);
             expect(new LocalDateTime(2014, 2, 28).getDayOfYear()).toBe(59);
             expect(new LocalDateTime(2014, 3, 1).getDayOfYear()).toBe(60);
@@ -247,7 +247,7 @@ describe('LocalDateTime', function () {
 
     describe('getMonthOfYear', function () {
         it('should return month of year', function () {
-            expect(new LocalDateTime(2014, 1, 1).getMonthOfYear()).toBe(1);
+            expect(new LocalDateTime(2014, 1, 1, 3, 4, 5, 6).getMonthOfYear()).toBe(1);
             expect(new LocalDateTime(2014, 12, 31).getMonthOfYear()).toBe(12);
         });
     });
@@ -261,7 +261,7 @@ describe('LocalDateTime', function () {
 
     describe('getYear', function () {
         it('should return year', function () {
-            expect(new LocalDateTime(2014, 1, 1).getYear()).toBe(2014);
+            expect(new LocalDateTime(2014, 1, 1, 3, 4, 5, 6).getYear()).toBe(2014);
             expect(new LocalDateTime(2014, 12, 31).getYear()).toBe(2014);
         });
     });

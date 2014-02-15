@@ -1,37 +1,18 @@
 /*globals jodajs*/
 jodajs.LocalDate = function (year, monthOfYear, dayOfMonth) {
-    var LocalDate = this.constructor,
-        DAY_IN_MILLIS = (1000 * 60 * 60 * 24);
+    var date = new Date(0),
+        LocalDate = this.constructor,
+        chrono = jodajs.ISOChronology;
 
-    function normalizedDay(year, month, day) {
-        var d = new LocalDate(year, month, day);
-        return (d.getDayOfMonth() < day) ? d.minusDays(d.getDayOfMonth()) : d;
-    }
+    date.setUTCFullYear(year);
+    date.setUTCMonth(monthOfYear - 1);
+    date.setUTCDate(dayOfMonth);
 
-    function endOfLastYearMillis(year) {
-        return new LocalDate(year - 1, 12, 31).getLocalMillis();
-    }
-
-    function deltaMonths(localDate, dMonths) {
-        var year = localDate.getYear(), month = localDate.getMonthOfYear() + dMonths;
-        if (month < 1 || month > 12) {
-            year += (month / 12);
-            month = dMonths < 0 ? (12 - month % 12) : (month % 12);
-        }
-        return normalizedDay(year, month, localDate.getDayOfMonth());
-    }
-
-    function init() {
-        var date = new Date(0);
-        date.setUTCFullYear(year);
-        date.setUTCMonth(monthOfYear - 1);
-        date.setUTCDate(dayOfMonth);
-        return date;
+    function ofMillis(millis) {
+        return LocalDate.fromMillisUTC(millis);
     }
 
     return {
-        date: init(),
-
         isEqual: function (other) {
             return this.compareTo(other) === 0;
         },
@@ -53,86 +34,84 @@ jodajs.LocalDate = function (year, monthOfYear, dayOfMonth) {
         },
 
         getDayOfMonth: function () {
-            return this.date.getUTCDate();
+            return chrono.dayOfMonth.get(date);
         },
 
         withDayOfMonth: function (dayOfMonth) {
-            return new LocalDate(this.getYear(), this.getMonthOfYear(), dayOfMonth);
+            return ofMillis(chrono.dayOfMonth.set(date, dayOfMonth));
         },
 
         getDayOfWeek: function () {
-            var day = this.date.getUTCDay();
-            return day === 0 ? 7 : day;
+            return chrono.dayOfWeek.get(date);
         },
         withDayOfWeek: function (dayOfWeek) {
-            return this.plusDays(dayOfWeek - this.getDayOfWeek());
+            return ofMillis(chrono.dayOfWeek.set(date, dayOfWeek));
         },
 
         getDayOfYear: function () {
-            return (this.getLocalMillis() - endOfLastYearMillis(this.getYear())) / DAY_IN_MILLIS;
+            return chrono.dayOfYear.get(date);
         },
         withDayOfYear: function (dayOfYear) {
-            return LocalDate.fromMillisUTC(endOfLastYearMillis(this.getYear()) + dayOfYear * DAY_IN_MILLIS);
+            return ofMillis(chrono.dayOfYear.set(date, dayOfYear));
         },
 
         getYear: function () {
-            return this.date.getUTCFullYear();
+            return chrono.year.get(date);
         },
         withYear: function (year) {
-            return normalizedDay(year, this.getMonthOfYear(), this.getDayOfMonth());
+            return ofMillis(chrono.year.set(date, year));
         },
 
         getMonthOfYear: function () {
-            return this.date.getUTCMonth() + 1;
+            return chrono.monthOfYear.get(date);
         },
         withMonthOfYear: function (monthOfYear) {
-            return normalizedDay(this.getYear(), monthOfYear, this.getDayOfMonth());
-        },
-
-        getLocalMillis: function () {
-            return this.date.getTime();
+            return ofMillis(chrono.monthOfYear.set(date, monthOfYear));
         },
 
         plusDays: function (days) {
-            return LocalDate.fromMillisUTC(this.getLocalMillis() + days * DAY_IN_MILLIS);
+            return ofMillis(chrono.days.add(date, days));
         },
         minusDays: function (days) {
-            return this.plusDays(-days);
+            return ofMillis(chrono.days.add(date, -days));
         },
 
         plusWeeks: function (weeks) {
-            return this.plusDays(7 * weeks);
+            return ofMillis(chrono.weeks.add(date, weeks));
         },
         minusWeeks: function (weeks) {
-            return this.minusDays(7 * weeks);
+            return ofMillis(chrono.weeks.add(date, -weeks));
         },
 
         plusMonths: function (months) {
-            return deltaMonths(this, months);
+            return ofMillis(chrono.months.add(date, months));
         },
         minusMonths: function (months) {
-            return deltaMonths(this, -months);
+            return ofMillis(chrono.months.add(date, -months));
         },
 
         plusYears: function (years) {
-            return normalizedDay(this.getYear() + years, this.getMonthOfYear(), this.getDayOfMonth());
+            return ofMillis(chrono.year.add(date, years));
         },
         minusYears: function (years) {
-            return this.plusYears(-years);
+            return ofMillis(chrono.year.add(date, -years));
         },
 
         toDate: function () {
             return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth());
         }
+
     };
 };
 
 (function (LocalDate, DateTimeUtils) {
+    var chrono = jodajs.ISOChronology;
+
     LocalDate.fromDate = function (date) {
         return new LocalDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
     };
     LocalDate.fromDateUTC = function (date) {
-        return new LocalDate(date.getUTCFullYear(), date.getUTCMonth() + 1, date.getUTCDate());
+        return new LocalDate(chrono.year.get(date), chrono.monthOfYear.get(date), chrono.dayOfMonth.get(date));
     };
     LocalDate.fromMillis = function (millis) {
         return LocalDate.fromDate(new Date(millis));
