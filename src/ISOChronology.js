@@ -13,7 +13,7 @@ jodajs.ISOChronology = (function () {
     }
 
     function startOfYear(year) {
-        return dateWithField(0, 'FullYear', year).getTime();
+        return dateWithField(0, 'FullYear', year);
     }
 
     function withNormalizedDay(date, day) {
@@ -60,7 +60,7 @@ jodajs.ISOChronology = (function () {
         },
         dayOfYear: {
             get: function (date) {
-                return 1 + Math.floor((date.getTime() - startOfYear(self.year.get(date))) / DAY_IN_MILLIS);
+                return 1 + Math.floor((date.getTime() - startOfYear(self.year.get(date)).getTime()) / DAY_IN_MILLIS);
             },
             set: function (date, dayOfYear) {
                 return new Date(self.dayOfMonth.set(self.monthOfYear.set(date, 1), 1).getTime() + (dayOfYear - 1) * DAY_IN_MILLIS);

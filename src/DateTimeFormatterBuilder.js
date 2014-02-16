@@ -1,9 +1,11 @@
 /*globals jodajs*/
 jodajs.DateTimeFormatterBuilder = function () {
-    var parsers = [], formatters = [];
+    var parsers = [], formatters = [], self;
 
     function number(field, minPrinted, maxParsed) {
-        parsers.push({});
+        parsers.push(function (obj) {
+
+        });
         formatters.push(function (obj) {
             var res = '' + obj[field]();
             while (res.length < minPrinted) {
@@ -11,6 +13,7 @@ jodajs.DateTimeFormatterBuilder = function () {
             }
             return res;
         });
+        return self;
     }
 
     function literal(text) {
@@ -18,52 +21,45 @@ jodajs.DateTimeFormatterBuilder = function () {
         formatters.push(function (obj) {
             return text;
         });
+        return self;
     }
 
-    return {
+    self = {
         millisOfSecond: function (minDigits) {
-            number('getMillisOfSecond', minDigits);
-            return this;
+            return number('getMillisOfSecond', minDigits, 3);
         },
         secondOfMinute: function (minDigits) {
-            number('getSecondOfMinute', minDigits);
-            return this;
+            return number('getSecondOfMinute', minDigits);
         },
         minuteOfHour: function (minDigits) {
-            number('getMinuteOfHour', minDigits);
-            return this;
+            return number('getMinuteOfHour', minDigits);
         },
         hourOfDay: function (minDigits) {
-            number('getHourOfDay', minDigits);
-            return this;
+            return number('getHourOfDay', minDigits);
         },
         dayOfMonth: function (minDigits) {
-            number('getDayOfMonth', minDigits);
-            return this;
+            return number('getDayOfMonth', minDigits);
         },
         dayOfWeek: function (minDigits) {
-            number('getDayOfWeek', minDigits);
-            return this;
+            return number('getDayOfWeek', minDigits);
         },
         dayOfYear: function (minDigits) {
-            number('getDayOfYear', minDigits);
-            return this;
+            return number('getDayOfYear', minDigits);
         },
         monthOfYear: function (minDigits) {
-            number('getMonthOfYear', minDigits);
-            return this;
+            return number('getMonthOfYear', minDigits);
         },
         year: function (minDigits, maxDigits) {
-            number('getYear', minDigits, maxDigits);
-            return this;
+            return number('getYear', minDigits, maxDigits);
         },
         literal: function (text) {
-            literal(text);
-            return this;
+            return literal(text);
         },
 
         toFormatter: function () {
             return new jodajs.DateTimeFormatter(formatters);
         }
     };
+
+    return self;
 };
