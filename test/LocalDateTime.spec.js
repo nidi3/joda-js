@@ -1,4 +1,4 @@
-/*global timeZone,littleBefore,almostDayAfter,goodDayAfter,matchers,jodajs,beforeEach,describe,it,expect*/
+/*global window,timeZone,littleBefore,almostDayAfter,goodDayAfter,matchers,jodajs,beforeEach,describe,it,expect*/
 describe('LocalDateTime', function () {
     var LocalDateTime = jodajs.LocalDateTime,
         DateTimeUtils = jodajs.DateTimeUtils,

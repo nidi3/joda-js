@@ -6,10 +6,9 @@ describe('DateTimeFormat', function () {
 
     describe('S', function () {
         it('should print millis of second', function () {
-            expect(DateTimeFormat.forPattern('S').print(new LocalDateTime(2000, 1, 2, 3, 4, 5, 123))).toBe('1');
+            expect(DateTimeFormat.forPattern('S').print(LocalDateTime(2000, 1, 2, 3, 4, 5, 123))).toBe('1');
         });
     });
-
 
 
 });
