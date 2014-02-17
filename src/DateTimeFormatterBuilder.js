@@ -24,8 +24,9 @@ exports.DateTimeFormatterBuilder = function () {
         formatters.push(function (obj) {
             var property = obj.getProperty(field),
                 res = '' + property.field.remainder(property.date);
+            res = res.substring(0, minPrinted);
             while (res.length < minPrinted) {
-                res = '0' + res;
+                res += '0';
             }
             return res;
         });
