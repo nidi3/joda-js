@@ -1,5 +1,5 @@
-/*globals jodajs*/
-jodajs.ISOChronology = (function () {
+/*globals exports*/
+exports.ISOChronology = (function () {
     var SECOND_IN_MILLIS = 1000,
         MINUTE_IN_MILLIS = 1000 * 60,
         HOUR_IN_MILLIS = 1000 * 60 * 60,
@@ -140,6 +140,9 @@ jodajs.ISOChronology = (function () {
         millis: {
             add: function (date, millis) {
                 return new Date(date.getTime() + millis);
+            },
+            remainder: function (date) {
+                return date % 1000;
             }
         }
 

@@ -1,5 +1,5 @@
-/*globals jodajs*/
-jodajs.DateTimeFormatterBuilder = function () {
+/*globals exports*/
+exports.DateTimeFormatterBuilder = function () {
     var parsers = [], formatters = [], self;
 
     function number(field, minPrinted, maxParsed) {
@@ -7,7 +7,23 @@ jodajs.DateTimeFormatterBuilder = function () {
 
         });
         formatters.push(function (obj) {
-            var res = '' + obj[field]();
+            var property = obj.getProperty(field),
+                res = '' + property.field.get(property.date);
+            while (res.length < minPrinted) {
+                res = '0' + res;
+            }
+            return res;
+        });
+        return self;
+    }
+
+    function fraction(field, minPrinted, maxParsed) {
+        parsers.push(function (obj) {
+
+        });
+        formatters.push(function (obj) {
+            var property = obj.getProperty(field),
+                res = '' + property.field.remainder(property.date);
             while (res.length < minPrinted) {
                 res = '0' + res;
             }
@@ -26,38 +42,41 @@ jodajs.DateTimeFormatterBuilder = function () {
 
     self = {
         millisOfSecond: function (minDigits) {
-            return number('getMillisOfSecond', minDigits, 3);
+            return number('millisOfSecond', minDigits, 3);
+        },
+        fractionOfSecond: function (minDigits) {
+            return fraction('millis', minDigits, 3);
         },
         secondOfMinute: function (minDigits) {
-            return number('getSecondOfMinute', minDigits);
+            return number('secondOfMinute', minDigits);
         },
         minuteOfHour: function (minDigits) {
-            return number('getMinuteOfHour', minDigits);
+            return number('minuteOfHour', minDigits);
         },
         hourOfDay: function (minDigits) {
-            return number('getHourOfDay', minDigits);
+            return number('hourOfDay', minDigits);
         },
         dayOfMonth: function (minDigits) {
-            return number('getDayOfMonth', minDigits);
+            return number('dayOfMonth', minDigits);
         },
         dayOfWeek: function (minDigits) {
-            return number('getDayOfWeek', minDigits);
+            return number('dayOfWeek', minDigits);
         },
         dayOfYear: function (minDigits) {
-            return number('getDayOfYear', minDigits);
+            return number('dayOfYear', minDigits);
         },
         monthOfYear: function (minDigits) {
-            return number('getMonthOfYear', minDigits);
+            return number('monthOfYear', minDigits);
         },
         year: function (minDigits, maxDigits) {
-            return number('getYear', minDigits, maxDigits);
+            return number('year', minDigits, maxDigits);
         },
         literal: function (text) {
             return literal(text);
         },
 
         toFormatter: function () {
-            return new jodajs.DateTimeFormatter(formatters);
+            return new exports.DateTimeFormatter(formatters);
         }
     };
 

@@ -1,5 +1,5 @@
-/*globals jodajs*/
-jodajs.DateTimeFormat = function () {
+/*globals exports*/
+exports.DateTimeFormat = function () {
 
 
     return {
@@ -214,8 +214,8 @@ jodajs.DateTimeFormat = function () {
         }
     }
 
-    jodajs.DateTimeFormat.forPattern = function (pattern) {
-        var builder = new jodajs.DateTimeFormatterBuilder();
+    exports.DateTimeFormat.forPattern = function (pattern) {
+        var builder = new exports.DateTimeFormatterBuilder();
         parsePatternTo(builder, pattern);
         return builder.toFormatter();
     };

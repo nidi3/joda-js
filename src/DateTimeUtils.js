@@ -1,5 +1,5 @@
-/*globals jodajs*/
-jodajs.DateTimeUtils = (function () {
+/*globals exports*/
+exports.DateTimeUtils = (function () {
     var systemMillisProvider = {
             getMillis: function () {
                 return new Date().getTime();
