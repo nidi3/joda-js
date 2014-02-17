@@ -13,7 +13,15 @@ describe('DateTimeUtils', function () {
         });
         it('should return the a fixed value if provider set to fixed', function () {
             Dtu.setCurrentMillisFixed(10000);
-            expect(Math.abs(Dtu.currentTimeMillis() - 10000)).toBeLessThan(10);
+            expect(Dtu.currentTimeMillis()).toBe(10000);
+        });
+        it('should use the given provider', function () {
+            Dtu.setCurrentMillisProvider({
+                getMillis: function () {
+                    return 42;
+                }
+            });
+            expect(Dtu.currentTimeMillis()).toBe(42);
         });
 
     });

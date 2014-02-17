@@ -34,7 +34,7 @@ exports.DateTimeUtils = (function () {
         setCurrentMillisFixed: function (fixed) {
             cMillisProvider = fixedMillisProvider(fixed);
         },
-        setCurrentMillsProvider: function (provider) {
+        setCurrentMillisProvider: function (provider) {
             cMillisProvider = provider;
         }
     };
