@@ -1,5 +1,5 @@
 /*globals exports*/
-exports.LocalFactory = (function (DateTimeUtils) {
+var localFactory = (function (DateTimeUtils) {
     return {
         addBasic: function (target, date, chrono) {
             target.getProperty = function (name) {

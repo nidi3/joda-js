@@ -1,5 +1,5 @@
-/*globals exports*/
-exports.LocalDateTime = (function (LocalFactory) {
+/*globals exports,localFactory*/
+exports.LocalDateTime = (function () {
     var chrono = exports.ISOChronology,
         LocalDateTime = function (year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond) {
             var self, date = new Date(0);
@@ -42,10 +42,10 @@ exports.LocalDateTime = (function (LocalFactory) {
                 }
             };
 
-            LocalFactory.addCons(LocalDateTime);
-            LocalFactory.addBasic(self, date, chrono);
-            LocalFactory.addDate(self, date, chrono, LocalDateTime.fromMillisUTC);
-            LocalFactory.addTime(self, date, chrono, LocalDateTime.fromMillisUTC);
+            localFactory.addCons(LocalDateTime);
+            localFactory.addBasic(self, date, chrono);
+            localFactory.addDate(self, date, chrono, LocalDateTime.fromMillisUTC);
+            localFactory.addTime(self, date, chrono, LocalDateTime.fromMillisUTC);
 
             return self;
         };
@@ -59,4 +59,4 @@ exports.LocalDateTime = (function (LocalFactory) {
     };
 
     return LocalDateTime;
-}(exports.LocalFactory));
+}());
