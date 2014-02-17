@@ -1,18 +1,8 @@
-/*global matchers,jodajs,beforeEach,describe,it,expect*/
+/*global timeZone,littleBefore,almostDayAfter,goodDayAfter,matchers,jodajs,beforeEach,describe,it,expect*/
 describe('LocalDateTime', function () {
     var LocalDateTime = jodajs.LocalDateTime,
         DateTimeUtils = jodajs.DateTimeUtils,
-        zone = new Date().getTimezoneOffset() * 60 * 1000,
-        t2014_2_3 = new Date(2014, 1, 3, 5, 6, 7, 100).getTime(),
-        littleBefore = function (time) {
-            return time - 10;
-        },
-        almostDayAfter = function (time) {
-            return time + 24 * 60 * 60 * 1000 - 10;
-        },
-        dayAfter = function (time) {
-            return time + 24 * 60 * 60 * 1000 + 10;
-        };
+        t2014_2_3 = new Date(2014, 1, 3, 5, 6, 7, 100).getTime();
 
     beforeEach(function () {
         this.addMatchers(matchers);
@@ -35,6 +25,17 @@ describe('LocalDateTime', function () {
             expect(new LocalDateTime(2014, 2, 3, 4).getMinuteOfHour()).toBe(0);
             expect(new LocalDateTime(2014, 2, 3).getHourOfDay()).toBe(0);
         });
+
+        it('should be usable with or without "new"', function () {
+            var d1, d2;
+            d1 = new LocalDateTime(2000, 1, 1);
+            expect(window.LocalDateTime).toBeUndefined();
+
+            d2 = LocalDateTime(2000, 1, 1);
+            expect(window.LocalDateTime).toBeUndefined();
+
+            expect(d1).toEq(d2);
+        });
     });
 
     describe('fromDate', function () {
@@ -42,16 +43,16 @@ describe('LocalDateTime', function () {
             expect(LocalDateTime.fromDate(new Date(littleBefore(t2014_2_3)))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
             expect(LocalDateTime.fromDate(new Date(t2014_2_3))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
             expect(LocalDateTime.fromDate(new Date(almostDayAfter(t2014_2_3)))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
-            expect(LocalDateTime.fromDate(new Date(dayAfter(t2014_2_3)))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
+            expect(LocalDateTime.fromDate(new Date(goodDayAfter(t2014_2_3)))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
         });
     });
 
     describe('fromDateUTC', function () {
         it('should construct a LocalDateTime from the given Date in UTC', function () {
-            expect(LocalDateTime.fromDateUTC(new Date(littleBefore(t2014_2_3) - zone))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
-            expect(LocalDateTime.fromDateUTC(new Date(t2014_2_3 - zone))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
-            expect(LocalDateTime.fromDateUTC(new Date(almostDayAfter(t2014_2_3) - zone))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
-            expect(LocalDateTime.fromDateUTC(new Date(dayAfter(t2014_2_3) - zone))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
+            expect(LocalDateTime.fromDateUTC(new Date(littleBefore(t2014_2_3) - timeZone))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
+            expect(LocalDateTime.fromDateUTC(new Date(t2014_2_3 - timeZone))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
+            expect(LocalDateTime.fromDateUTC(new Date(almostDayAfter(t2014_2_3) - timeZone))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
+            expect(LocalDateTime.fromDateUTC(new Date(goodDayAfter(t2014_2_3) - timeZone))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
 
         });
     });
@@ -61,16 +62,16 @@ describe('LocalDateTime', function () {
             expect(LocalDateTime.fromMillis(littleBefore(t2014_2_3))).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
             expect(LocalDateTime.fromMillis(t2014_2_3)).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
             expect(LocalDateTime.fromMillis(almostDayAfter(t2014_2_3))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
-            expect(LocalDateTime.fromMillis(dayAfter(t2014_2_3))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
+            expect(LocalDateTime.fromMillis(goodDayAfter(t2014_2_3))).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
         });
     });
 
     describe('fromMillisUTC', function () {
         it('should construct a LocalDateTime from the given millis in UTC', function () {
-            expect(LocalDateTime.fromMillisUTC(littleBefore(t2014_2_3) - zone)).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
-            expect(LocalDateTime.fromMillisUTC(t2014_2_3 - zone)).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
-            expect(LocalDateTime.fromMillisUTC(almostDayAfter(t2014_2_3) - zone)).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
-            expect(LocalDateTime.fromMillisUTC(dayAfter(t2014_2_3) - zone)).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
+            expect(LocalDateTime.fromMillisUTC(littleBefore(t2014_2_3) - timeZone)).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
+            expect(LocalDateTime.fromMillisUTC(t2014_2_3 - timeZone)).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
+            expect(LocalDateTime.fromMillisUTC(almostDayAfter(t2014_2_3) - timeZone)).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
+            expect(LocalDateTime.fromMillisUTC(goodDayAfter(t2014_2_3) - timeZone)).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
 
         });
     });
@@ -86,23 +87,23 @@ describe('LocalDateTime', function () {
             DateTimeUtils.setCurrentMillisFixed(almostDayAfter(t2014_2_3));
             expect(LocalDateTime.now()).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
 
-            DateTimeUtils.setCurrentMillisFixed(dayAfter(t2014_2_3));
+            DateTimeUtils.setCurrentMillisFixed(goodDayAfter(t2014_2_3));
             expect(LocalDateTime.now()).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
         });
     });
 
     describe('nowUTC', function () {
         it('should construct a LocalDateTime from now in UTC', function () {
-            DateTimeUtils.setCurrentMillisFixed(littleBefore(t2014_2_3) - zone);
+            DateTimeUtils.setCurrentMillisFixed(littleBefore(t2014_2_3) - timeZone);
             expect(LocalDateTime.nowUTC()).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 90));
 
-            DateTimeUtils.setCurrentMillisFixed(t2014_2_3 - zone);
+            DateTimeUtils.setCurrentMillisFixed(t2014_2_3 - timeZone);
             expect(LocalDateTime.nowUTC()).toEq(new LocalDateTime(2014, 2, 3, 5, 6, 7, 100));
 
-            DateTimeUtils.setCurrentMillisFixed(almostDayAfter(t2014_2_3) - zone);
+            DateTimeUtils.setCurrentMillisFixed(almostDayAfter(t2014_2_3) - timeZone);
             expect(LocalDateTime.nowUTC()).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 90));
 
-            DateTimeUtils.setCurrentMillisFixed(dayAfter(t2014_2_3) - zone);
+            DateTimeUtils.setCurrentMillisFixed(goodDayAfter(t2014_2_3) - timeZone);
             expect(LocalDateTime.nowUTC()).toEq(new LocalDateTime(2014, 2, 4, 5, 6, 7, 110));
         });
     });
