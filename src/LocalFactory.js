@@ -51,11 +51,18 @@ var localFactory = (function (DateTimeUtils) {
                 return fromDate(chrono.dayOfYear.set(date, dayOfYear));
             };
 
-            target.getYear = function () {
-                return chrono.year.get(date);
+            target.getWeekOfWeekyear = function () {
+                return chrono.weekOfWeekyear.get(date);
             };
-            target.withYear = function (year) {
-                return fromDate(chrono.year.set(date, year));
+            target.withWeekOfWeekyear = function (weekOfWeekyear) {
+                return fromDate(chrono.weekOfWeekyear.set(date, weekOfWeekyear));
+            };
+
+            target.getWeekyear = function () {
+                return chrono.weekyear.get(date);
+            };
+            target.withWeekyear = function (weekyear) {
+                return fromDate(chrono.weekyear.set(date, weekyear));
             };
 
             target.getMonthOfYear = function () {
@@ -63,6 +70,13 @@ var localFactory = (function (DateTimeUtils) {
             };
             target.withMonthOfYear = function (monthOfYear) {
                 return fromDate(chrono.monthOfYear.set(date, monthOfYear));
+            };
+
+            target.getYear = function () {
+                return chrono.year.get(date);
+            };
+            target.withYear = function (year) {
+                return fromDate(chrono.year.set(date, year));
             };
 
             target.plusDays = function (days) {
