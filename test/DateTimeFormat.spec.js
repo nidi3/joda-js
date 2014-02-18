@@ -145,5 +145,27 @@ describe('DateTimeFormat', function () {
         });
     });
 
+    describe('non letter', function () {
+        it('should print literal', function () {
+            expect(DateTimeFormat.forPattern('+"*ç%').print(LocalDate(2010, 1, 3))).toBe('+"*ç%');
+            expect(DateTimeFormat.forPattern('?d?').print(LocalDate(2010, 1, 3))).toBe('?3?');
+        });
+        it('should be possible to mix with letters', function () {
+            expect(DateTimeFormat.forPattern('d?d').print(LocalDate(2010, 1, 3))).toBe('3?3');
+        });
+    });
+
+    describe("''", function () {
+        it("should print '", function () {
+            expect(DateTimeFormat.forPattern("''").print(LocalDate(2010, 1, 3))).toBe("'");
+        });
+    });
+
+    describe("'<letter>'", function () {
+        it("should print <letter>", function () {
+            expect(DateTimeFormat.forPattern("'hula'").print(LocalDate(2010, 1, 3))).toBe("hula");
+        });
+    });
+
 
 });

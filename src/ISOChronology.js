@@ -149,7 +149,7 @@ exports.ISOChronology = (function () {
                     month = self.monthOfYear.get(date) + months;
                 if (month < 1 || month > 12) {
                     year += (month / 12);
-                    month = months < 0 ? (12 - month % 12) : (month % 12);
+                    month = (months < 0 ? 12 : 0) + month % 12;
                 }
                 d.setUTCFullYear(year);
                 d.setUTCMonth(month - 1);

@@ -4,10 +4,6 @@ describe('LocalDate', function () {
         DateTimeUtils = jodajs.DateTimeUtils,
         t2014_2_3 = new Date(2014, 1, 3).getTime();
 
-    beforeEach(function () {
-        this.addMatchers(matchers);
-    });
-
     describe('init', function () {
         it('should construct a LocalDate with given fields', function () {
             var d = LocalDate(2014, 2, 3);
@@ -225,6 +221,7 @@ describe('LocalDate', function () {
             expect(LocalDate(2012, 12, 31).getWeekyear()).toBe(2013);
             expect(LocalDate(2013, 12, 29).getWeekyear()).toBe(2013);
             expect(LocalDate(2013, 12, 30).getWeekyear()).toBe(2014);
+            expect(LocalDate(2013, 6, 6).getWeekyear()).toBe(2013);
         });
     });
 
@@ -285,6 +282,7 @@ describe('LocalDate', function () {
             expect(LocalDate(2014, 1, 29).plusMonths(2)).toEq(LocalDate(2014, 3, 29));
             expect(LocalDate(2014, 1, 29).plusMonths(1)).toEq(LocalDate(2014, 2, 28));
             expect(LocalDate(2016, 1, 29).plusMonths(1)).toEq(LocalDate(2016, 2, 29));
+            expect(LocalDate(2016, 1, 29).plusMonths(13)).toEq(LocalDate(2017, 2, 28));
         });
     });
     describe('minusMonths', function () {
@@ -292,6 +290,7 @@ describe('LocalDate', function () {
             expect(LocalDate(2014, 3, 29).minusMonths(1)).toEq(LocalDate(2014, 2, 28));
             expect(LocalDate(2014, 3, 29).minusMonths(2)).toEq(LocalDate(2014, 1, 29));
             expect(LocalDate(2016, 3, 29).minusMonths(1)).toEq(LocalDate(2016, 2, 29));
+            expect(LocalDate(2016, 3, 29).minusMonths(13)).toEq(LocalDate(2015, 2, 28));
         });
     });
 

@@ -132,6 +132,25 @@ module.exports = function (grunt) {
 //                    'test-jasmine/SpecRunner2.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/DateTimeUtils.spec.js', JASMINE_DIR + '/spec/DateTimeFormatterBuilder.spec.js']
                 }
             }
+        },
+
+        jasmine: {
+            src: ['test/init.js', SOURCES, 'src/translations_*.js'],
+            options: {
+                specs: 'test/*.spec.js',
+                helpers: 'test/*Utils.js',
+                template: require('grunt-template-jasmine-istanbul'),
+                templateOptions: {
+                    coverage: 'coverage/coverage.json',
+                    report: 'coverage',
+                    thresholds: {
+                        lines: 75,
+                        statements: 75,
+                        branches: 75,
+                        functions: 90
+                    }
+                }
+            }
         }
 
     });

@@ -4,10 +4,6 @@ describe('LocalTime', function () {
         DateTimeUtils = jodajs.DateTimeUtils,
         t10_15 = new Date(2014, 1, 3, 10, 15, 2, 100).getTime();
 
-    beforeEach(function () {
-        this.addMatchers(matchers);
-    });
-
     describe('init', function () {
         it('should construct a LocalTime with given fields', function () {
             var d = LocalTime(10, 15, 2, 3);
