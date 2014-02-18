@@ -4,6 +4,7 @@ dist/
 .idea/
 test-jasmine/lib/
 test-jasmine/spec/
+coverage/
 *.log
 *.iml
 .DS_Store
