@@ -238,6 +238,50 @@ describe('LocalDateTime', function () {
         });
     });
 
+    describe('getWeekOfWeekyear', function () {
+        it('should return the week of year', function () {
+            expect(LocalDateTime(2010, 1, 3, 4, 5, 6, 7).getWeekOfWeekyear()).toBe(53);
+            expect(LocalDateTime(2010, 1, 4).getWeekOfWeekyear()).toBe(1);
+            expect(LocalDateTime(2011, 1, 2).getWeekOfWeekyear()).toBe(52);
+            expect(LocalDateTime(2011, 1, 3).getWeekOfWeekyear()).toBe(1);
+            expect(LocalDateTime(2012, 1, 1).getWeekOfWeekyear()).toBe(52);
+            expect(LocalDateTime(2012, 1, 2).getWeekOfWeekyear()).toBe(1);
+            expect(LocalDateTime(2012, 12, 30).getWeekOfWeekyear()).toBe(52);
+            expect(LocalDateTime(2012, 12, 31).getWeekOfWeekyear()).toBe(1);
+            expect(LocalDateTime(2013, 12, 29).getWeekOfWeekyear()).toBe(52);
+            expect(LocalDateTime(2013, 12, 30).getWeekOfWeekyear()).toBe(1);
+        });
+    });
+
+    describe('withWeekOfWeekyear', function () {
+        it('should return a new LocalDate with the given week of weekyear', function () {
+            expect(LocalDate(2010, 1, 3).withWeekOfWeekyear(52)).toEq(LocalDate(2009, 12, 27));
+            expect(LocalDate(2010, 1, 4).withWeekOfWeekyear(2)).toEq(LocalDate(2010, 1, 11));
+        });
+    });
+
+    describe('getWeekyear', function () {
+        it('should return the year the current week belongs to', function () {
+            expect(LocalDateTime(2010, 1, 3, 4, 5, 6, 7).getWeekyear()).toBe(2009);
+            expect(LocalDateTime(2010, 1, 4).getWeekyear()).toBe(2010);
+            expect(LocalDateTime(2011, 1, 2).getWeekyear()).toBe(2010);
+            expect(LocalDateTime(2011, 1, 3).getWeekyear()).toBe(2011);
+            expect(LocalDateTime(2012, 1, 1).getWeekyear()).toBe(2011);
+            expect(LocalDateTime(2012, 1, 2).getWeekyear()).toBe(2012);
+            expect(LocalDateTime(2012, 12, 30).getWeekyear()).toBe(2012);
+            expect(LocalDateTime(2012, 12, 31).getWeekyear()).toBe(2013);
+            expect(LocalDateTime(2013, 12, 29).getWeekyear()).toBe(2013);
+            expect(LocalDateTime(2013, 12, 30).getWeekyear()).toBe(2014);
+        });
+    });
+
+    describe('withWeekyear', function () {
+        it('should return a new LocalDate with the given week of weekyear', function () {
+            expect(LocalDate(2010, 1, 3).withWeekyear(2010)).toEq(LocalDate(2011, 1, 2));
+            expect(LocalDate(2010, 1, 4).withWeekyear(2011)).toEq(LocalDate(2011, 1, 3));
+        });
+    });
+
     describe('withDayOfYear', function () {
         it('should return a new LocalDateTime with the given day of year', function () {
             expect(LocalDateTime(2001, 5, 16, 3, 4, 5, 6).withDayOfYear(2)).toEq(LocalDateTime(2001, 1, 2, 3, 4, 5, 6));

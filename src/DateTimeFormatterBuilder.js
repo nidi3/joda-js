@@ -69,6 +69,12 @@ exports.DateTimeFormatterBuilder = function () {
         monthOfYear: function (minDigits) {
             return number('monthOfYear', minDigits);
         },
+        weekOfWeekyear: function (minDigits, maxDigits) {
+            return number('weekOfWeekyear', minDigits, maxDigits);
+        },
+        weekyear: function (minDigits, maxDigits) {
+            return number('weekyear', minDigits, maxDigits);
+        },
         year: function (minDigits, maxDigits) {
             return number('year', minDigits, maxDigits);
         },

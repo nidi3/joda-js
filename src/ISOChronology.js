@@ -1,9 +1,11 @@
 /*globals exports*/
 exports.ISOChronology = (function () {
     var SECOND_IN_MILLIS = 1000,
-        MINUTE_IN_MILLIS = 1000 * 60,
-        HOUR_IN_MILLIS = 1000 * 60 * 60,
-        DAY_IN_MILLIS = 1000 * 60 * 60 * 24,
+        MINUTE_IN_MILLIS = 60 * SECOND_IN_MILLIS,
+        HOUR_IN_MILLIS = 60 * MINUTE_IN_MILLIS,
+        DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS,
+        WEEK_IN_MILLIS = 7 * DAY_IN_MILLIS,
+        MIN_DAYS_IN_FIRST_WEEK = 4,
         self;
 
     function dateWithField(init, field, value) {
@@ -39,6 +41,48 @@ exports.ISOChronology = (function () {
             },
             set: function (date, month) {
                 return withNormalizedDay(dateWithField(date, 'Month', month - 1), self.dayOfMonth.get(date));
+            }
+        },
+        weekOfWeekyear: {
+            get: function (date) {
+                function getFirstWeekOfYearMillis(year) {
+                    var jan1 = startOfYear(year),
+                        jan1dayOfWeek = self.dayOfWeek.get(jan1);
+
+                    return jan1.getTime() + ((jan1dayOfWeek > (8 - MIN_DAYS_IN_FIRST_WEEK))
+                        ? (8 - jan1dayOfWeek) * DAY_IN_MILLIS
+                        : -(jan1dayOfWeek - 1) * DAY_IN_MILLIS);
+                }
+
+                function getWeeksInYear(year) {
+                    var firstWeekMillis1 = getFirstWeekOfYearMillis(year),
+                        firstWeekMillis2 = getFirstWeekOfYearMillis(year + 1);
+                    return Math.floor((firstWeekMillis2 - firstWeekMillis1) / WEEK_IN_MILLIS);
+                }
+
+                var year = self.year.get(date),
+                    t = date.getTime(),
+                    firstWeekMillis1 = getFirstWeekOfYearMillis(year),
+                    firstWeekMillis2;
+                if (t < firstWeekMillis1) {
+                    return getWeeksInYear(year - 1);
+                }
+                firstWeekMillis2 = getFirstWeekOfYearMillis(year + 1);
+                if (t >= firstWeekMillis2) {
+                    return 1;
+                }
+                return Math.floor((t - firstWeekMillis1) / WEEK_IN_MILLIS) + 1;
+            }
+        },
+        weekyear: {
+            get: function (date) {
+                var d = date, week = self.weekOfWeekyear.get(date);
+                if (week === 1) {
+                    d = new Date(date.getTime() + WEEK_IN_MILLIS);
+                } else if (week > 51) {
+                    d = new Date(date.getTime() - 2 * WEEK_IN_MILLIS);
+                }
+                return self.year.get(d);
             }
         },
         dayOfMonth: {
@@ -114,7 +158,7 @@ exports.ISOChronology = (function () {
         },
         weeks: {
             add: function (date, weeks) {
-                return new Date(date.getTime() + weeks * 7 * DAY_IN_MILLIS);
+                return new Date(date.getTime() + weeks * WEEK_IN_MILLIS);
             }
         },
         days: {

@@ -71,6 +71,23 @@ describe('DateTimeFormatterBuilder', function () {
         });
     });
 
+    describe('weekOfWeekyear', function () {
+        it('should add a week of weekyear field', function () {
+            var formatter = DateTimeFormatterBuilder().weekOfWeekyear(2).toFormatter();
+            expect(formatter.print(LocalDate(2010, 1, 3))).toBe('53');
+            expect(formatter.print(LocalDate(2010, 1, 4))).toBe('01');
+        });
+    });
+
+    describe('weekyear', function () {
+        it('should add a weekyear field', function () {
+            var formatter = DateTimeFormatterBuilder().weekyear(4).toFormatter();
+            expect(formatter.print(LocalDate(2010, 1, 3))).toBe('2009');
+            expect(formatter.print(LocalDate(2010, 1, 4))).toBe('2010');
+        });
+    });
+
+
     describe('year', function () {
         it('should add a year field', function () {
             var formatter = DateTimeFormatterBuilder().year(1).toFormatter();

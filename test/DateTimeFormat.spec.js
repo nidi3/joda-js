@@ -94,10 +94,10 @@ describe('DateTimeFormat', function () {
 
     describe('D', function () {
         it('should print day of year', function () {
-            expect(DateTimeFormat.forPattern('D').print(ldt)).toBe('188');
-            expect(DateTimeFormat.forPattern('DD').print(ldt)).toBe('188');
-            expect(DateTimeFormat.forPattern('DDD').print(ldt)).toBe('188');
-            expect(DateTimeFormat.forPattern('DDDD').print(ldt)).toBe('0188');
+            expect(DateTimeFormat.forPattern('D').print(ldt)).toBe('184');
+            expect(DateTimeFormat.forPattern('DD').print(ldt)).toBe('184');
+            expect(DateTimeFormat.forPattern('DDD').print(ldt)).toBe('184');
+            expect(DateTimeFormat.forPattern('DDDD').print(ldt)).toBe('0184');
         });
     });
 
@@ -113,8 +113,8 @@ describe('DateTimeFormat', function () {
 
     describe('e', function () {
         it('should print day of week (numeric)', function () {
-            expect(DateTimeFormat.forPattern('e').print(ldt)).toBe('1');
-            expect(DateTimeFormat.forPattern('ee').print(ldt)).toBe('01');
+            expect(DateTimeFormat.forPattern('e').print(ldt)).toBe('7');
+            expect(DateTimeFormat.forPattern('ee').print(ldt)).toBe('07');
         });
     });
 
@@ -124,6 +124,24 @@ describe('DateTimeFormat', function () {
             expect(DateTimeFormat.forPattern('EE').print(ldt)).toBe('Su');
             expect(DateTimeFormat.forPattern('EEE').print(ldt)).toBe('Su');
             expect(DateTimeFormat.forPattern('EEEE').print(ldt)).toBe('Sunday');
+        });
+    });
+
+    describe('w', function () {
+        it('should print week of weekyear', function () {
+            expect(DateTimeFormat.forPattern('w').print(LocalDate(2010, 1, 3))).toBe('53');
+            expect(DateTimeFormat.forPattern('ww').print(LocalDate(2010, 1, 3))).toBe('53');
+            expect(DateTimeFormat.forPattern('www').print(LocalDate(2010, 1, 3))).toBe('053');
+        });
+    });
+
+    describe('x', function () {
+        it('should print weekyear', function () {
+            expect(DateTimeFormat.forPattern('x').print(LocalDate(2010, 1, 3))).toBe('2009');
+            expect(DateTimeFormat.forPattern('xx').print(LocalDate(2010, 1, 3))).toBe('09');
+            expect(DateTimeFormat.forPattern('xxx').print(LocalDate(2010, 1, 3))).toBe('2009');
+            expect(DateTimeFormat.forPattern('xxxx').print(LocalDate(2010, 1, 3))).toBe('2009');
+            expect(DateTimeFormat.forPattern('xxxxx').print(LocalDate(2010, 1, 3))).toBe('02009');
         });
     });
 
