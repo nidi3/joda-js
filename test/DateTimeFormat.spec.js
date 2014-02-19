@@ -120,9 +120,10 @@ describe('DateTimeFormat', function () {
 
     describe('E', function () {
         it('should print day of week (text)', function () {
-            expect(DateTimeFormat.forPattern('E').print(ldt)).toBe('Su');
-            expect(DateTimeFormat.forPattern('EE').print(ldt)).toBe('Su');
-            expect(DateTimeFormat.forPattern('EEE').print(ldt)).toBe('Su');
+            expect(DateTimeFormat.forPattern('E').print(ldt)).toBe('Sun');
+            expect(DateTimeFormat.forPattern('E').withLanguage('de').print(ldt)).toBe('So');
+            expect(DateTimeFormat.forPattern('EE').print(ldt)).toBe('Sun');
+            expect(DateTimeFormat.forPattern('EEE').print(ldt)).toBe('Sun');
             expect(DateTimeFormat.forPattern('EEEE').print(ldt)).toBe('Sunday');
         });
     });

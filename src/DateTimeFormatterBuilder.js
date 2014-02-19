@@ -17,6 +17,18 @@ exports.DateTimeFormatterBuilder = function () {
         return self;
     }
 
+    function text(field) {
+        parsers.push(function (obj) {
+
+        });
+        formatters.push(function (obj, language) {
+            var property = obj.getProperty(field),
+                res = '' + property.field.get(property.date, language);
+            return res;
+        });
+        return self;
+    }
+
     function fraction(field, minPrinted, maxParsed) {
         parsers.push(function (obj) {
 
@@ -57,17 +69,38 @@ exports.DateTimeFormatterBuilder = function () {
         hourOfDay: function (minDigits) {
             return number('hourOfDay', minDigits);
         },
+        clockhourOfDay: function (minDigits) {
+            return number('clockhourOfDay', minDigits);
+        },
+        hourOfHalfday: function (minDigits) {
+            return number('hourOfHalfday', minDigits);
+        },
+        clockhourOfHalfday: function (minDigits) {
+            return number('clockhourOfHalfday', minDigits);
+        },
         dayOfMonth: function (minDigits) {
             return number('dayOfMonth', minDigits);
         },
         dayOfWeek: function (minDigits) {
             return number('dayOfWeek', minDigits);
         },
+        dayOfWeekText: function () {
+            return text('dayOfWeekText');
+        },
+        dayOfWeekShortText: function () {
+            return text('dayOfWeekShortText');
+        },
         dayOfYear: function (minDigits) {
             return number('dayOfYear', minDigits);
         },
         monthOfYear: function (minDigits) {
             return number('monthOfYear', minDigits);
+        },
+        monthOfYearText: function () {
+            return text('monthOfYearText');
+        },
+        monthOfYearShortText: function () {
+            return text('monthOfYearShortText');
         },
         weekOfWeekyear: function (minDigits, maxDigits) {
             return number('weekOfWeekyear', minDigits, maxDigits);
@@ -80,6 +113,9 @@ exports.DateTimeFormatterBuilder = function () {
         },
         literal: function (text) {
             return literal(text);
+        },
+        halfdayOfDayText: function () {
+            return text('halfdayOfDay');
         },
 
         toFormatter: function () {
