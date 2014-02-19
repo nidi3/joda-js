@@ -1,6 +1,7 @@
 /*globals exports*/
 exports.ISOChronology = (function () {
-    var SECOND_IN_MILLIS = 1000,
+    var translations = exports.translations,
+        SECOND_IN_MILLIS = 1000,
         MINUTE_IN_MILLIS = 60 * SECOND_IN_MILLIS,
         HOUR_IN_MILLIS = 60 * MINUTE_IN_MILLIS,
         DAY_IN_MILLIS = 24 * HOUR_IN_MILLIS,
@@ -21,6 +22,21 @@ exports.ISOChronology = (function () {
     function withNormalizedDay(date, day) {
         var dayOfMonth = self.dayOfMonth.get(date);
         return new Date(date.getTime() - ((dayOfMonth < day) ? DAY_IN_MILLIS * dayOfMonth : 0));
+    }
+
+    function getFirstWeekOfYearMillis(year) {
+        var jan1 = startOfYear(year),
+            jan1dayOfWeek = self.dayOfWeek.get(jan1);
+
+        return jan1.getTime() + ((jan1dayOfWeek > (8 - MIN_DAYS_IN_FIRST_WEEK))
+            ? (8 - jan1dayOfWeek) * DAY_IN_MILLIS
+            : -(jan1dayOfWeek - 1) * DAY_IN_MILLIS);
+    }
+
+    function getWeeksInYear(year) {
+        var firstWeekMillis1 = getFirstWeekOfYearMillis(year),
+            firstWeekMillis2 = getFirstWeekOfYearMillis(year + 1);
+        return Math.floor((firstWeekMillis2 - firstWeekMillis1) / WEEK_IN_MILLIS);
     }
 
     self = {
@@ -45,21 +61,6 @@ exports.ISOChronology = (function () {
         },
         weekOfWeekyear: {
             get: function (date) {
-                function getFirstWeekOfYearMillis(year) {
-                    var jan1 = startOfYear(year),
-                        jan1dayOfWeek = self.dayOfWeek.get(jan1);
-
-                    return jan1.getTime() + ((jan1dayOfWeek > (8 - MIN_DAYS_IN_FIRST_WEEK))
-                        ? (8 - jan1dayOfWeek) * DAY_IN_MILLIS
-                        : -(jan1dayOfWeek - 1) * DAY_IN_MILLIS);
-                }
-
-                function getWeeksInYear(year) {
-                    var firstWeekMillis1 = getFirstWeekOfYearMillis(year),
-                        firstWeekMillis2 = getFirstWeekOfYearMillis(year + 1);
-                    return Math.floor((firstWeekMillis2 - firstWeekMillis1) / WEEK_IN_MILLIS);
-                }
-
                 var year = self.year.get(date),
                     t = date.getTime(),
                     firstWeekMillis1 = getFirstWeekOfYearMillis(year),
@@ -72,6 +73,9 @@ exports.ISOChronology = (function () {
                     return 1;
                 }
                 return Math.floor((t - firstWeekMillis1) / WEEK_IN_MILLIS) + 1;
+            },
+            set: function (date, weekOfWeekyear) {
+                return new Date(date.getTime() + (weekOfWeekyear - this.get(date)) * WEEK_IN_MILLIS);
             }
         },
         weekyear: {
@@ -83,6 +87,33 @@ exports.ISOChronology = (function () {
                     d = new Date(date.getTime() - 2 * WEEK_IN_MILLIS);
                 }
                 return self.year.get(d);
+            },
+            set: function (date, weekyear) {
+                var thisWeekyear = this.get(date);
+                if (thisWeekyear === weekyear) {
+                    return date;
+                }
+
+                var thisDow = self.dayOfWeek.get(date),
+                    weeksInFromYear = getWeeksInYear(thisWeekyear),
+                    weeksInToYear = getWeeksInYear(weekyear),
+                    maxOutWeeks = (weeksInToYear < weeksInFromYear) ? weeksInToYear : weeksInFromYear,
+                    setToWeek = self.weekOfWeekyear.get(date);
+                if (setToWeek > maxOutWeeks) {
+                    setToWeek = maxOutWeeks;
+                }
+
+                var res = self.year.set(date, weekyear),
+                    workWoyYear = this.get(res);
+                if (workWoyYear < weekyear) {
+                    res = new Date(res.getTime() + WEEK_IN_MILLIS);
+                } else if (workWoyYear > weekyear) {
+                    res = new Date(res.getTime() - WEEK_IN_MILLIS);
+                }
+
+                var currentWoyWeek = self.weekOfWeekyear.get(res);
+                res = new Date(res.getTime() + (setToWeek - currentWoyWeek) * WEEK_IN_MILLIS);
+                return self.dayOfWeek.set(res, thisDow);
             }
         },
         dayOfMonth: {
@@ -142,6 +173,54 @@ exports.ISOChronology = (function () {
                 return dateWithField(date, 'Milliseconds', millisOfSecond);
             }
         },
+
+        halfdayOfDay: {
+            get: function (date, language) {
+                return translations.get(language, 'halfday')[self.hourOfDay.get(date) < 12 ? 0 : 1];
+            }
+        },
+
+        clockhourOfDay: {
+            get: function (date) {
+                return self.hourOfDay.get(date) + 1;
+            },
+            set: function (date, clockhourOfDay) {
+                return self.hourOfDay.set(date, clockhourOfDay - 1);
+            }
+        },
+        hourOfHalfday: {
+            get: function (date) {
+                return self.hourOfDay.get(date) % 12;
+            }
+        },
+        clockhourOfHalfday: {
+            get: function (date) {
+                var h = self.hourOfHalfday.get(date);
+                return h === 0 ? 12 : h;
+            }
+        },
+
+        monthOfYearText: {
+            get: function (date, language) {
+                return translations.get(language, 'monthLong')[self.monthOfYear.get(date) - 1];
+            }
+        },
+        monthOfYearShortText: {
+            get: function (date, language) {
+                return translations.get(language, 'monthShort')[self.monthOfYear.get(date) - 1];
+            }
+        },
+        dayOfWeekText: {
+            get: function (date, language) {
+                return translations.get(language, 'dayLong')[self.dayOfWeek.get(date) - 1];
+            }
+        },
+        dayOfWeekShortText: {
+            get: function (date, language) {
+                return translations.get(language, 'dayShort')[self.dayOfWeek.get(date) - 1];
+            }
+        },
+
         months: {
             add: function (date, months) {
                 var d = new Date(date),
