@@ -4,7 +4,8 @@ module.exports = function (grunt) {
         DIST_DIR = 'dist',
         SOURCES = ['src/DateTimeUtils.js', 'src/translations.js', 'src/DefaultChronology.js',
             'src/localFactory.js', 'src/LocalDateTime.js', 'src/LocalDate.js', 'src/LocalTime.js',
-            'src/DateTimeFormatter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js'],
+            'src/DateTimeFormatter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js',
+            'src/JsonFormatter.js'],
 
         browsers = [
             {browserName: "internet explorer", version: "6", platform: "XP"},

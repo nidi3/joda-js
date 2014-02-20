@@ -20,7 +20,7 @@ exports.LocalDate = (function () {
                     }
                 };
 
-            localFactory.addBasic(self, date, chrono);
+            localFactory.addBasic(self,'LocalDate',  date, chrono);
             localFactory.addDate(self, date, chrono, LocalDate.fromDateUTC);
             return self;
         };

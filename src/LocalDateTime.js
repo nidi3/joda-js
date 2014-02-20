@@ -33,7 +33,7 @@ exports.LocalDateTime = (function () {
                     }
                 };
 
-            localFactory.addBasic(self, date, chrono);
+            localFactory.addBasic(self, 'LocalDateTime', date, chrono);
             localFactory.addDate(self, date, chrono, LocalDateTime.fromMillisUTC);
             localFactory.addTime(self, date, chrono, LocalDateTime.fromMillisUTC);
 

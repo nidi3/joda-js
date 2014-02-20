@@ -2,6 +2,7 @@
 describe('DateTimeFormat', function () {
     var DateTimeFormat = jodajs.DateTimeFormat,
         LocalDateTime = jodajs.LocalDateTime,
+        LocalTime = jodajs.LocalTime,
         LocalDate = jodajs.LocalDate,
         ldt = LocalDateTime(2000, 7, 2, 3, 4, 5, 123);
 
@@ -11,6 +12,11 @@ describe('DateTimeFormat', function () {
             expect(DateTimeFormat.forPattern('SS').print(ldt)).toBe('12');
             expect(DateTimeFormat.forPattern('SSS').print(ldt)).toBe('123');
             expect(DateTimeFormat.forPattern('SSSS').print(ldt)).toBe('1230');
+
+            expect(DateTimeFormat.forPattern('S').print(new LocalTime(1, 2, 3, 4))).toBe('0');
+            expect(DateTimeFormat.forPattern('SS').print(new LocalTime(1, 2, 3, 4))).toBe('00');
+            expect(DateTimeFormat.forPattern('SSS').print(new LocalTime(1, 2, 3, 4))).toBe('004');
+            expect(DateTimeFormat.forPattern('SSSS').print(new LocalTime(1, 2, 3, 4))).toBe('0040');
         });
     });
 
@@ -142,7 +148,7 @@ describe('DateTimeFormat', function () {
         });
     });
 
-  describe('G', function () {
+    describe('G', function () {
         it('should print era', function () {
             expect(DateTimeFormat.forPattern('G').print(LocalDate(-1, 1, 1))).toBe('BC');
             expect(DateTimeFormat.forPattern('G').print(LocalDate(1, 1, 1))).toBe('AD');

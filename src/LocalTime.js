@@ -24,7 +24,7 @@ exports.LocalTime = (function () {
                 };
 
             localFactory.addCons(LocalTime);
-            localFactory.addBasic(self, date, chrono);
+            localFactory.addBasic(self, 'LocalTime', date, chrono);
             localFactory.addTime(self, date, chrono, LocalTime.fromMillisUTC);
 
             return self;
