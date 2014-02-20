@@ -51,46 +51,9 @@ exports.DateTimeFormat = function () {
             return buf;
         }
 
-        function isNumericToken(token) {
-            var tokenLen = token.length;
-            if (tokenLen > 0) {
-                switch (token.charAt(0)) {
-                case 'c': // century (number)
-                case 'C': // century of era (number)
-                case 'x': // weekyear (number)
-                case 'y': // year (number)
-                case 'Y': // year of era (number)
-                case 'd': // day of month (number)
-                case 'h': // hour of day (number, 1..12)
-                case 'H': // hour of day (number, 0..23)
-                case 'm': // minute of hour (number)
-                case 's': // second of minute (number)
-                case 'S': // fraction of second (number)
-                case 'e': // day of week (number)
-                case 'D': // day of year (number)
-                case 'F': // day of week in month (number)
-                case 'w': // week of year (number)
-                case 'W': // week of month (number)
-                case 'k': // hour of day (1..24)
-                case 'K': // hour of day (0..11)
-                    return true;
-                case 'M': // month of year (text and number)
-                    if (tokenLen <= 2) {
-                        return true;
-                    }
-                }
-            }
-            return false;
-        }
-
-        var i, token, tokenLen, c, lenientParse, maxDigits, sub,
-            length = pattern.length;
-
-        for (i = 0; i < length; i += 1) {
-            token = parseToken(pattern, i);
-            i = tokenPos;
-            tokenLen = token.length;
-            c = token.charAt(0);
+        function handleToken(token) {
+            var tokenLen = token.length,
+                c = token.charAt(0);
             switch (c) {
             case 'G': // era designator (text)
                 builder.eraText();
@@ -102,50 +65,26 @@ exports.DateTimeFormat = function () {
             case 'y': // year (number)
             case 'Y': // year of era (number)
                 if (tokenLen === 2) {
-                    lenientParse = true;
-
-                    // Peek ahead to next token.
-                    if (i + 1 < length) {
-                        if (isNumericToken(parseToken(pattern, i + 1))) {
-                            // If next token is a number, cannot support
-                            // lenient parse, because it will consume digits
-                            // that it should not.
-                            lenientParse = false;
-                        }
-                    }
-
                     // Use pivots which are compatible with SimpleDateFormat.
                     switch (c) {
                     case 'x':
-                        builder.twoDigitWeekyear(LocalDate.now().getWeekyear() - 30, lenientParse);
+                        builder.twoDigitWeekyear(LocalDate.now().getWeekyear() - 30);
                         break;
                     case 'y':
                     case 'Y':
-                    default:
-                        builder.twoDigitYear(LocalDate.now().getYear() - 30, lenientParse);
+                        builder.twoDigitYear(LocalDate.now().getYear() - 30);
                         break;
                     }
                 } else {
-                    // Try to support long year values.
-                    maxDigits = 9;
-
-                    // Peek ahead to next token.
-                    if (i + 1 < length) {
-                        if (isNumericToken(parseToken(pattern, i + 1))) {
-                            // If next token is a number, cannot support long years.
-                            maxDigits = tokenLen;
-                        }
-                    }
-
                     switch (c) {
                     case 'x':
-                        builder.weekyear(tokenLen, maxDigits);
+                        builder.weekyear(tokenLen, tokenLen);
                         break;
                     case 'y':
-                        builder.year(tokenLen, maxDigits);
+                        builder.year(tokenLen, tokenLen);
                         break;
                     case 'Y':
-                        builder.yearOfEra(tokenLen, maxDigits);
+                        builder.yearOfEra(tokenLen, tokenLen);
                         break;
                     }
                 }
@@ -221,12 +160,20 @@ exports.DateTimeFormat = function () {
                 }
                 break;
             case "'": // literal text
-                sub = token.substring(1);
-                builder.literal(sub);
+                builder.literal(token.substring(1));
                 break;
             default:
                 throw new Error("Illegal pattern component: " + token);
             }
+        }
+
+        var i, token,
+            length = pattern.length;
+
+        for (i = 0; i < length; i += 1) {
+            token = parseToken(pattern, i);
+            i = tokenPos;
+            handleToken(token);
         }
     }
 
