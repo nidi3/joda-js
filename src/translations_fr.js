@@ -4,5 +4,6 @@ jodajs.translations.register('fr', {
     monthLong: ['janvier', 'février', 'mars', 'avril', 'mai', 'juin', 'juillet', 'août', 'septembre', 'octobre', 'novembre', 'décembre'],
     dayShort: ['lun', 'mar', 'mer', 'jeu', 'ven', 'sam', 'dim'],
     dayLong: ['lundi', 'mardi', 'mercredi', 'jeudi', 'vendredi', 'samedi', 'dimanche'],
-    halfday: ['AM', 'PM']
+    halfday: ['AM', 'PM'],
+    era: ['av. J.-C.', 'ap. J.-C.']
 });

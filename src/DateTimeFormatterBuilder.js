@@ -36,8 +36,9 @@ exports.DateTimeFormatterBuilder = function () {
         });
         formatters.push(function (obj) {
             var property = obj.getProperty(field),
-                res = property.field.get(property.date) % 100;
-            return padLeft(res, 2);
+                year = property.field.get(property.date),
+                res = year < 0 ? -year : year;
+            return padLeft(res % 100, 2);
         });
         return self;
     }
@@ -128,14 +129,15 @@ exports.DateTimeFormatterBuilder = function () {
         }
     };
     var i,
-        numberFields = ['secondOfMinute', 'minuteOfHour', 'hourOfDay', 'clockhourOfDay', 'hourOfHalfday', 'clockhourOfHalfday', 'dayOfMonth', 'dayOfWeek', 'dayOfYear', 'monthOfYear', 'weekOfWeekyear', 'weekyear', 'year'],
+        numberFields = ['secondOfMinute', 'minuteOfHour', 'hourOfDay', 'clockhourOfDay', 'hourOfHalfday', 'clockhourOfHalfday', 'dayOfMonth', 'dayOfWeek', 'dayOfYear', 'monthOfYear', 'weekOfWeekyear', 'weekyear', 'year', 'yearOfEra', 'centuryOfEra'],
         textFields = [
             ['dayOfWeek', true],
             ['dayOfWeek', false],
             ['monthOfYear', true],
             ['monthOfYear', false],
             ['halfdayOfDay', false],
-            ['timeZone', true]
+            ['timeZone', true],
+            ['era', false]
         ];
     for (i = 0; i < numberFields.length; i += 1) {
         addNumber(self, numberFields[i]);

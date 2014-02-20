@@ -1,46 +1,37 @@
 /*globals exports,localFactory*/
 exports.LocalDateTime = (function () {
-    var chrono = exports.ISOChronology,
+    var chrono = exports.DefaultChronology,
         LocalDateTime = function (year, monthOfYear, dayOfMonth, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond) {
-            var self, date = new Date(0);
-
-            date.setUTCFullYear(year);
-            date.setUTCMonth(monthOfYear - 1);
-            date.setUTCDate(dayOfMonth);
-            date.setUTCHours(hourOfDay || 0);
-            date.setUTCMinutes(minuteOfHour || 0);
-            date.setUTCSeconds(secondOfMinute || 0);
-            date.setUTCMilliseconds(millisOfSecond || 0);
-
-            self = {
-                compareTo: function (other) {
-                    var res = this.getYear() - other.getYear();
-                    if (res === 0) {
-                        res = this.getMonthOfYear() - other.getMonthOfYear();
-                    }
-                    if (res === 0) {
-                        res = this.getDayOfMonth() - other.getDayOfMonth();
-                    }
-                    if (res === 0) {
-                        res = this.getHourOfDay() - other.getHourOfDay();
-                    }
-                    if (res === 0) {
-                        res = this.getMinuteOfHour() - other.getMinuteOfHour();
-                    }
-                    if (res === 0) {
-                        res = this.getSecondOfMinute() - other.getSecondOfMinute();
-                    }
-                    if (res === 0) {
-                        res = this.getMillisOfSecond() - other.getMillisOfSecond();
-                    }
-                    return res;
-                },
+            var date = chrono.dateOfTime(chrono.dateOfDate(year, monthOfYear, dayOfMonth), hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond),
+                self = {
+                    compareTo: function (other) {
+                        var res = this.getYear() - other.getYear();
+                        if (res === 0) {
+                            res = this.getMonthOfYear() - other.getMonthOfYear();
+                        }
+                        if (res === 0) {
+                            res = this.getDayOfMonth() - other.getDayOfMonth();
+                        }
+                        if (res === 0) {
+                            res = this.getHourOfDay() - other.getHourOfDay();
+                        }
+                        if (res === 0) {
+                            res = this.getMinuteOfHour() - other.getMinuteOfHour();
+                        }
+                        if (res === 0) {
+                            res = this.getSecondOfMinute() - other.getSecondOfMinute();
+                        }
+                        if (res === 0) {
+                            res = this.getMillisOfSecond() - other.getMillisOfSecond();
+                        }
+                        return res;
+                    },
 
 
-                toDate: function () {
-                    return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth(), this.getHourOfDay(), this.getMinuteOfHour(), this.getSecondOfMinute(), this.getMillisOfSecond());
-                }
-            };
+                    toDate: function () {
+                        return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth(), this.getHourOfDay(), this.getMinuteOfHour(), this.getSecondOfMinute(), this.getMillisOfSecond());
+                    }
+                };
 
             localFactory.addBasic(self, date, chrono);
             localFactory.addDate(self, date, chrono, LocalDateTime.fromMillisUTC);

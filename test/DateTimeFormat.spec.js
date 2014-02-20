@@ -111,6 +111,44 @@ describe('DateTimeFormat', function () {
         });
     });
 
+    describe('Y', function () {
+        it('should print year of era (>0)', function () {
+            expect(DateTimeFormat.forPattern('Y').print(ldt)).toBe('2000');
+            expect(DateTimeFormat.forPattern('YY').print(ldt)).toBe('00');
+            expect(DateTimeFormat.forPattern('YYY').print(ldt)).toBe('2000');
+            expect(DateTimeFormat.forPattern('YYYY').print(ldt)).toBe('2000');
+            expect(DateTimeFormat.forPattern('YYYYY').print(ldt)).toBe('02000');
+
+            expect(DateTimeFormat.forPattern('Y').print(LocalDate(-1, 1, 1))).toBe('1');
+            expect(DateTimeFormat.forPattern('YY').print(LocalDate(-1, 1, 1))).toBe('01');
+            expect(DateTimeFormat.forPattern('YYY').print(LocalDate(-1, 1, 1))).toBe('001');
+            expect(DateTimeFormat.forPattern('Y').print(LocalDate(-1, 1, 1))).toBe('1');
+        });
+    });
+
+    describe('C', function () {
+        it('should print century', function () {
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(2000, 1, 1))).toBe('20');
+            expect(DateTimeFormat.forPattern('CC').print(LocalDate(2000, 1, 1))).toBe('20');
+            expect(DateTimeFormat.forPattern('CCC').print(LocalDate(2000, 1, 1))).toBe('020');
+
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(2001, 1, 1))).toBe('21');
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(2000, 1, 1))).toBe('20');
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(100, 1, 1))).toBe('1');
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(1, 1, 1))).toBe('1');
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(-1, 1, 1))).toBe('1');
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(-100, 1, 1))).toBe('1');
+            expect(DateTimeFormat.forPattern('C').print(LocalDate(-101, 1, 1))).toBe('2');
+        });
+    });
+
+  describe('G', function () {
+        it('should print era', function () {
+            expect(DateTimeFormat.forPattern('G').print(LocalDate(-1, 1, 1))).toBe('BC');
+            expect(DateTimeFormat.forPattern('G').print(LocalDate(1, 1, 1))).toBe('AD');
+        });
+    });
+
     describe('e', function () {
         it('should print day of week (numeric)', function () {
             expect(DateTimeFormat.forPattern('e').print(ldt)).toBe('7');
@@ -158,6 +196,16 @@ describe('DateTimeFormat', function () {
         it('should print time zone', function () {
             expect(DateTimeFormat.forPattern('z').print(LocalDate(2010, 1, 3))).toMatch(/\w{3}/);
             expect(DateTimeFormat.forPattern('zz').print(LocalDate(2010, 1, 3))).toMatch(/\w{3}/);
+            expect(DateTimeFormat.forPattern('zzz').print(LocalDate(2010, 1, 3))).toMatch(/\w{3}/);
+            expect(DateTimeFormat.forPattern('zzzz').print(LocalDate(2010, 1, 3))).toBe('');
+        });
+    });
+
+    describe('unknown letter', function () {
+        it('should throw an Error', function () {
+            expect(function () {
+                DateTimeFormat.forPattern('b')
+            }).toThrow();
         });
     });
 

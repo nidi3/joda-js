@@ -1,5 +1,5 @@
 /*globals exports*/
-exports.ISOChronology = (function () {
+exports.DefaultChronology = (function () {
     var translations = exports.translations,
         SECOND_IN_MILLIS = 1000,
         MINUTE_IN_MILLIS = 60 * SECOND_IN_MILLIS,
@@ -39,16 +39,53 @@ exports.ISOChronology = (function () {
         return Math.floor((firstWeekMillis2 - firstWeekMillis1) / WEEK_IN_MILLIS);
     }
 
+    function getYear(date) {
+        return date.getUTCFullYear();
+    }
+
     self = {
+        dateOfDate: function (year, monthOfYear, dayOfMonth) {
+            var d = new Date(0);
+            d.setUTCFullYear(year <= 0 ? year + 1 : year);
+            d.setUTCMonth(monthOfYear - 1);
+            d.setUTCDate(dayOfMonth);
+            return d;
+        },
+        dateOfTime: function (date, hourOfDay, minuteOfHour, secondOfMinute, millisOfSecond) {
+            var d = new Date(date);
+            d.setUTCHours(hourOfDay || 0);
+            d.setUTCMinutes(minuteOfHour || 0);
+            d.setUTCSeconds(secondOfMinute || 0);
+            d.setUTCMilliseconds(millisOfSecond || 0);
+            return d;
+        },
+        era: {
+            getText: function (date, language) {
+                return translations.get(language, 'era')[getYear(date) <= 0 ? 0 : 1];
+            }
+        },
+        centuryOfEra: {
+            get: function (date) {
+                var value = self.yearOfEra.get(date) + 99;
+                return Math.floor(value >= 0 ? value / 100 : ((value + 1) / 100) - 1);
+            }
+        },
         year: {
             get: function (date) {
-                return date.getUTCFullYear();
+                var y = getYear(date);
+                return y <= 0 ? y + 1 : y;
             },
             set: function (date, year) {
                 return withNormalizedDay(dateWithField(date, 'FullYear', year), self.dayOfMonth.get(date));
             },
             add: function (date, years) {
                 return this.set(date, this.get(date) + years);
+            }
+        },
+        yearOfEra: {
+            get: function (date) {
+                var y = getYear(date);
+                return y <= 0 ? 1 - y : y;
             }
         },
         monthOfYear: {
@@ -190,9 +227,6 @@ exports.ISOChronology = (function () {
             get: function (date) {
                 return self.hourOfDay.get(date) + 1;
             },
-            set: function (date, clockhourOfDay) {
-                return self.hourOfDay.set(date, clockhourOfDay - 1);
-            }
         },
         hourOfHalfday: {
             get: function (date) {

@@ -227,6 +227,7 @@ describe('LocalDate', function () {
 
     describe('withWeekyear', function () {
         it('should return a new LocalDate with the given week of weekyear', function () {
+            expect(LocalDate(2010, 1, 3).withWeekyear(2009)).toEq(LocalDate(2010, 1, 3));
             expect(LocalDate(2010, 1, 3).withWeekyear(2010)).toEq(LocalDate(2011, 1, 2));
             expect(LocalDate(2010, 1, 4).withWeekyear(2011)).toEq(LocalDate(2011, 1, 3));
         });

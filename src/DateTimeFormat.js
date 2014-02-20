@@ -90,11 +90,11 @@ exports.DateTimeFormat = function () {
             token = parseToken(pattern, i);
             i = tokenPos;
             tokenLen = token.length;
-            if (tokenLen === 0) {
-                break;
-            }
             c = token.charAt(0);
             switch (c) {
+            case 'G': // era designator (text)
+                builder.eraText();
+                break;
             case 'C': // century of era (number)
                 builder.centuryOfEra(tokenLen, tokenLen);
                 break;
@@ -206,7 +206,7 @@ exports.DateTimeFormat = function () {
                 break;
             case 'z': // time zone (text)
                 if (tokenLen >= 4) {
-                    //builder.zimeZoneName();
+                    //builder.zimeZoneText();
                 } else {
                     builder.timeZoneShortText();
                 }

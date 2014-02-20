@@ -4,5 +4,6 @@ jodajs.translations.register('en', {
     monthLong: ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December'],
     dayShort: ['Mon', 'Tue', 'Wed', 'Thu', 'Fri', 'Sat', 'Sun'],
     dayLong: ['Monday', 'Tuesday', 'Wednesday', 'Thursday', 'Friday', 'Saturday', 'Sunday'],
-    halfday: ['AM', 'PM']
+    halfday: ['AM', 'PM'],
+    era: ['BC', 'AD']
 });
