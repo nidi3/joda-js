@@ -1,7 +1,38 @@
 /*globals exports*/
-var localFactory = (function (DateTimeUtils) {
+var localFactory = (function (DateTimeUtils, DateTimeFormat) {
+    function accessor(name, field) {
+        return name + field.substring(0, 1).toUpperCase() + field.substring(1);
+    }
+
+    function addGetAndWith(target, field, date, chrono, fromDate) {
+        target[accessor('get', field)] = function () {
+            return chrono[field].get(date);
+        };
+        target[accessor('with', field)] = function (value) {
+            return fromDate(chrono[field].set(date, value));
+        };
+    }
+
+    function addPlusAndMinus(target, field, date, chrono, fromDate) {
+        target[accessor('plus', field)] = function (value) {
+            return fromDate(chrono[field].add(date, value));
+        };
+        target[accessor('minus', field)] = function (value) {
+            return fromDate(chrono[field].add(date, -value));
+        };
+    }
+
+    function forEach(fields, fn) {
+        for (var i = 0; i < fields.length; i += 1) {
+            fn(fields[i]);
+        }
+    }
+
     return {
-        addBasic: function (target, date, chrono) {
+        addBasic: function (target, type, date, chrono, defaultPattern) {
+            var defaultFormat = DateTimeFormat.forPattern(defaultPattern);
+
+            target.type = type;
             target.getProperty = function (name) {
                 return {date: date, field: chrono[name]};
             };
@@ -13,6 +44,16 @@ var localFactory = (function (DateTimeUtils) {
             };
             target.isAfter = function (other) {
                 return target.compareTo(other) > 0;
+            };
+            target.toString = function (pattern, language) {
+                var format = defaultFormat;
+                if (pattern) {
+                    format = DateTimeFormat.forPattern(pattern);
+                    if (language) {
+                        format = format.withLanguage(language);
+                    }
+                }
+                return format.print(target);
             };
         },
         addCons: function (target) {
@@ -30,140 +71,21 @@ var localFactory = (function (DateTimeUtils) {
             };
         },
         addDate: function (target, date, chrono, fromDate) {
-            target.getDayOfMonth = function () {
-                return chrono.dayOfMonth.get(date);
-            };
-            target.withDayOfMonth = function (dayOfMonth) {
-                return fromDate(chrono.dayOfMonth.set(date, dayOfMonth));
-            };
-
-            target.getDayOfWeek = function () {
-                return chrono.dayOfWeek.get(date);
-            };
-            target.withDayOfWeek = function (dayOfWeek) {
-                return fromDate(chrono.dayOfWeek.set(date, dayOfWeek));
-            };
-
-            target.getDayOfYear = function () {
-                return chrono.dayOfYear.get(date);
-            };
-            target.withDayOfYear = function (dayOfYear) {
-                return fromDate(chrono.dayOfYear.set(date, dayOfYear));
-            };
-
-            target.getWeekOfWeekyear = function () {
-                return chrono.weekOfWeekyear.get(date);
-            };
-            target.withWeekOfWeekyear = function (weekOfWeekyear) {
-                return fromDate(chrono.weekOfWeekyear.set(date, weekOfWeekyear));
-            };
-
-            target.getWeekyear = function () {
-                return chrono.weekyear.get(date);
-            };
-            target.withWeekyear = function (weekyear) {
-                return fromDate(chrono.weekyear.set(date, weekyear));
-            };
-
-            target.getMonthOfYear = function () {
-                return chrono.monthOfYear.get(date);
-            };
-            target.withMonthOfYear = function (monthOfYear) {
-                return fromDate(chrono.monthOfYear.set(date, monthOfYear));
-            };
-
-            target.getYear = function () {
-                return chrono.year.get(date);
-            };
-            target.withYear = function (year) {
-                return fromDate(chrono.year.set(date, year));
-            };
-
-            target.plusDays = function (days) {
-                return fromDate(chrono.days.add(date, days));
-            };
-            target.minusDays = function (days) {
-                return fromDate(chrono.days.add(date, -days));
-            };
-
-            target.plusWeeks = function (weeks) {
-                return fromDate(chrono.weeks.add(date, weeks));
-            };
-            target.minusWeeks = function (weeks) {
-                return fromDate(chrono.weeks.add(date, -weeks));
-            };
-
-            target.plusMonths = function (months) {
-                return fromDate(chrono.months.add(date, months));
-            };
-            target.minusMonths = function (months) {
-                return fromDate(chrono.months.add(date, -months));
-            };
-
-            target.plusYears = function (years) {
-                return fromDate(chrono.year.add(date, years));
-            };
-            target.minusYears = function (years) {
-                return fromDate(chrono.year.add(date, -years));
-            };
+            forEach(['dayOfMonth', 'dayOfWeek', 'dayOfYear', 'weekOfWeekyear', 'weekyear', 'monthOfYear', 'year'], function (field) {
+                addGetAndWith(target, field, date, chrono, fromDate);
+            });
+            forEach(['days', 'weeks', 'months', 'years'], function (field) {
+                addPlusAndMinus(target, field, date, chrono, fromDate);
+            });
         },
         addTime: function (target, date, chrono, fromDate) {
-            target.getMillisOfSecond = function () {
-                return chrono.millisOfSecond.get(date);
-            };
-            target.withMillisOfSecond = function (millis) {
-                return fromDate(chrono.millisOfSecond.set(date, millis));
-            };
-
-            target.getSecondOfMinute = function () {
-                return chrono.secondOfMinute.get(date);
-            };
-            target.withSecondOfMinute = function (secondOfMinute) {
-                return fromDate(chrono.secondOfMinute.set(date, secondOfMinute));
-            };
-
-            target.getMinuteOfHour = function () {
-                return chrono.minuteOfHour.get(date);
-            };
-            target.withMinuteOfHour = function (minuteOfHour) {
-                return fromDate(chrono.minuteOfHour.set(date, minuteOfHour));
-            };
-
-            target.getHourOfDay = function () {
-                return chrono.hourOfDay.get(date);
-            };
-            target.withHourOfDay = function (hourOfDay) {
-                return fromDate(chrono.hourOfDay.set(date, hourOfDay));
-            };
-
-            target.plusMillis = function (millis) {
-                return fromDate(chrono.millis.add(date, millis));
-            };
-            target.minusMillis = function (millis) {
-                return fromDate(chrono.millis.add(date, -millis));
-            };
-
-            target.plusSeconds = function (seconds) {
-                return fromDate(chrono.seconds.add(date, seconds));
-            };
-            target.minusSeconds = function (seconds) {
-                return fromDate(chrono.seconds.add(date, -seconds));
-            };
-
-            target.plusMinutes = function (minutes) {
-                return fromDate(chrono.minutes.add(date, minutes));
-            };
-            target.minusMinutes = function (minutes) {
-                return fromDate(chrono.minutes.add(date, -minutes));
-            };
-
-            target.plusHours = function (hours) {
-                return fromDate(chrono.hours.add(date, hours));
-            };
-            target.minusHours = function (hours) {
-                return fromDate(chrono.hours.add(date, -hours));
-            };
+            forEach(['millisOfSecond', 'secondOfMinute', 'minuteOfHour', 'hourOfDay'], function (field) {
+                addGetAndWith(target, field, date, chrono, fromDate);
+            });
+            forEach(['millis', 'seconds', 'minutes', 'hours'], function (field) {
+                addPlusAndMinus(target, field, date, chrono, fromDate);
+            });
         }
     };
-}(exports.DateTimeUtils));
+}(exports.DateTimeUtils, exports.DateTimeFormat));
 

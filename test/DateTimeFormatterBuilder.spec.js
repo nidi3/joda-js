@@ -2,7 +2,8 @@
 describe('DateTimeFormatterBuilder', function () {
     var DateTimeFormatterBuilder = jodajs.DateTimeFormatterBuilder,
         LocalDateTime = jodajs.LocalDateTime,
-        LocalDate = jodajs.LocalDate;
+        LocalDate = jodajs.LocalDate,
+        LocalTime = jodajs.LocalTime;
 
     describe('init', function () {
         it('should be usable with or without "new"', function () {
@@ -15,10 +16,27 @@ describe('DateTimeFormatterBuilder', function () {
         });
     });
 
+    describe('fractionOfSecond', function () {
+        it('should add a fraction of second field', function () {
+            expect(DateTimeFormatterBuilder().fractionOfSecond(1, 1).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('0');
+            expect(DateTimeFormatterBuilder().fractionOfSecond(1, 2).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('01');
+            expect(DateTimeFormatterBuilder().fractionOfSecond(1, 3).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
+            expect(DateTimeFormatterBuilder().fractionOfSecond(1, 4).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
+
+            expect(DateTimeFormatterBuilder().fractionOfSecond(2, 2).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('01');
+            expect(DateTimeFormatterBuilder().fractionOfSecond(2, 3).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
+            expect(DateTimeFormatterBuilder().fractionOfSecond(2, 4).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
+
+            expect(DateTimeFormatterBuilder().fractionOfSecond(4, 4).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('0120');
+        });
+    });
+
     describe('millisOfSecond', function () {
         it('should add a millis of second field', function () {
-            var formatter = DateTimeFormatterBuilder().millisOfSecond(4).toFormatter();
-            expect(formatter.print(LocalDateTime(2000, 1, 2, 3, 4, 5, 6))).toBe('0006');
+            expect(DateTimeFormatterBuilder().millisOfSecond(1).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('12');
+            expect(DateTimeFormatterBuilder().millisOfSecond(2).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('12');
+            expect(DateTimeFormatterBuilder().millisOfSecond(3).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
+            expect(DateTimeFormatterBuilder().millisOfSecond(4).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('0012');
         });
     });
 

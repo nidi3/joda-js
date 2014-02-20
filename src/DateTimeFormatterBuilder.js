@@ -2,20 +2,28 @@
 exports.DateTimeFormatterBuilder = function () {
     var parsers = [], formatters = [], self;
 
-    function padLeft(value, len) {
+    function pad(value, len, fn) {
         value = '' + value;
         while (value.length < len) {
-            value = '0' + value;
+            value = fn(value);
         }
         return value;
     }
 
+    function padLeft(value, len) {
+        return pad(value, len, function (value) {
+            return '0' + value;
+        });
+    }
+
     function padRight(value, len) {
-        value = '' + value;
-        while (value.length < len) {
-            value += '0';
-        }
-        return value;
+        return pad(value, len, function (value) {
+            return value + '0';
+        });
+    }
+
+    function cutRight(value, len) {
+        return value.substring(0, len);
     }
 
     function number(field, minPrinted, maxParsed) {
@@ -50,7 +58,7 @@ exports.DateTimeFormatterBuilder = function () {
         formatters.push(function (obj, language) {
             var property = obj.getProperty(field),
                 res = property.field.getText(property.date, language, short);
-            return '' + res;
+            return res;
         });
         return self;
     }
@@ -70,16 +78,14 @@ exports.DateTimeFormatterBuilder = function () {
         return self;
     }
 
-    function fraction(field, minPrinted, maxParsed) {
+    function fraction(field, minDigits, maxDigits) {
         parsers.push(function (obj) {
 
         });
         formatters.push(function (obj) {
             var property = obj.getProperty(field),
                 res = property.field.remainder(property.date);
-            res = padRight(res, minPrinted);
-            res = res.substring(0, minPrinted);
-            return res;
+            return padRight(cutRight(padLeft(res, 3), maxDigits), minDigits);
         });
         return self;
     }
@@ -108,8 +114,8 @@ exports.DateTimeFormatterBuilder = function () {
         millisOfSecond: function (minDigits) {
             return number('millisOfSecond', minDigits, 3);
         },
-        fractionOfSecond: function (minDigits) {
-            return fraction('millis', minDigits, 3);
+        fractionOfSecond: function (minDigits, maxDigits) {
+            return fraction('millis', minDigits, maxDigits);
         },
         timeZoneOffset: function (withSeparator) {
             return timeZone(withSeparator);

@@ -316,4 +316,16 @@ describe('LocalDate', function () {
             expect(LocalDate(2014, 2, 9).toDate()).toEqual(new Date(2014, 1, 9, 0, 0, 0, 0));
         });
     });
+
+    describe('toString', function () {
+        it('should return the LocalDate in ISO format (yyyy-MM-dd)', function () {
+            expect(LocalDate(2014, 2, 9).toString()).toBe('2014-02-09');
+        });
+        it('should return the LocalDate in the given format', function () {
+            expect(LocalDate(2014, 2, 9).toString('dd.MM.yyyy')).toBe('09.02.2014');
+        });
+        it('should return the LocalDate in the given format and language', function () {
+            expect(LocalDate(2014, 12, 9).toString('dd.MMM.yyyy', 'de')).toBe('09.Dez.2014');
+        });
+    });
 });

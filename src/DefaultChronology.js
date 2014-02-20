@@ -77,9 +77,6 @@ exports.DefaultChronology = (function () {
             },
             set: function (date, year) {
                 return withNormalizedDay(dateWithField(date, 'FullYear', year), self.dayOfMonth.get(date));
-            },
-            add: function (date, years) {
-                return this.set(date, this.get(date) + years);
             }
         },
         yearOfEra: {
@@ -226,7 +223,7 @@ exports.DefaultChronology = (function () {
         clockhourOfDay: {
             get: function (date) {
                 return self.hourOfDay.get(date) + 1;
-            },
+            }
         },
         hourOfHalfday: {
             get: function (date) {
@@ -250,6 +247,12 @@ exports.DefaultChronology = (function () {
                 }
                 var parse = /\((.+?)\)$/.exec(new Date().toString());
                 return parse ? parse[1] : '';
+            }
+        },
+
+        years: {
+            add: function (date, years) {
+                return self.year.set(date, self.year.get(date) + years);
             }
         },
 

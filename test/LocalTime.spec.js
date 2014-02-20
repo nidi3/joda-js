@@ -246,4 +246,12 @@ describe('LocalTime', function () {
         });
     });
 
+    describe('toString', function () {
+        it('should return the LocalDate in ISO format (HH:mm:ss.SSS)', function () {
+            expect(LocalTime(10, 11, 12, 13).toString()).toBe('10:11:12.013');
+        });
+        it('should return the LocalTime in the given format', function () {
+            expect(LocalTime(10, 11, 12, 13).toString('HH:mm:ss')).toBe('10:11:12');
+        });
+    });
 });

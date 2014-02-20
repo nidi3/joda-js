@@ -27,13 +27,12 @@ exports.LocalDateTime = (function () {
                         return res;
                     },
 
-
                     toDate: function () {
                         return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth(), this.getHourOfDay(), this.getMinuteOfHour(), this.getSecondOfMinute(), this.getMillisOfSecond());
                     }
                 };
 
-            localFactory.addBasic(self, 'LocalDateTime', date, chrono);
+            localFactory.addBasic(self, 'LocalDateTime', date, chrono, "yyyy-MM-dd'T'HH:mm:ss.SSS");
             localFactory.addDate(self, date, chrono, LocalDateTime.fromMillisUTC);
             localFactory.addTime(self, date, chrono, LocalDateTime.fromMillisUTC);
 

@@ -443,4 +443,16 @@ describe('LocalDateTime', function () {
             expect(LocalDateTime(2014, 2, 9, 3, 4, 5, 6).toDate()).toEqual(new Date(2014, 1, 9, 3, 4, 5, 6));
         });
     });
+
+    describe('toString', function () {
+        it("should return the LocalDateTime in ISO format (yyyy-MM-dd'T'HH:mm:ss.SSS)", function () {
+            expect(LocalDateTime(2014, 2, 9, 3, 4, 5, 6).toString()).toBe('2014-02-09T03:04:05.006');
+        });
+        it('should return the LocalDateTime in the given format', function () {
+            expect(LocalDateTime(2014, 2, 9).toString('dd.MM.yyyy')).toBe('09.02.2014');
+        });
+        it('should return the LocalDateTime in the given format and language', function () {
+            expect(LocalDateTime(2014, 12, 9).toString('dd.MMM.yyyy', 'de')).toBe('09.Dez.2014');
+        });
+    });
 });

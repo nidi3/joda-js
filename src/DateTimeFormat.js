@@ -1,4 +1,4 @@
-/*globals exports*/
+/*globals exports,jodajs*/
 exports.DateTimeFormat = function () {
 
 
@@ -7,7 +7,7 @@ exports.DateTimeFormat = function () {
     };
 };
 
-(function (LocalDate) {
+(function () {
     function parsePatternTo(builder, pattern) {
         var tokenPos;
 
@@ -68,11 +68,11 @@ exports.DateTimeFormat = function () {
                     // Use pivots which are compatible with SimpleDateFormat.
                     switch (c) {
                     case 'x':
-                        builder.twoDigitWeekyear(LocalDate.now().getWeekyear() - 30);
+                        builder.twoDigitWeekyear(jodajs.LocalDate.now().getWeekyear() - 30);
                         break;
                     case 'y':
                     case 'Y':
-                        builder.twoDigitYear(LocalDate.now().getYear() - 30);
+                        builder.twoDigitYear(jodajs.LocalDate.now().getYear() - 30);
                         break;
                     }
                 } else {
@@ -125,7 +125,7 @@ exports.DateTimeFormat = function () {
                 builder.secondOfMinute(tokenLen);
                 break;
             case 'S': // fraction of second (number)
-                builder.fractionOfSecond(tokenLen);
+                builder.fractionOfSecond(tokenLen, tokenLen);
                 break;
             case 'e': // day of week (number)
                 builder.dayOfWeek(tokenLen);
@@ -182,4 +182,4 @@ exports.DateTimeFormat = function () {
         parsePatternTo(builder, pattern);
         return builder.toFormatter();
     };
-}(exports.LocalDate));
+}());

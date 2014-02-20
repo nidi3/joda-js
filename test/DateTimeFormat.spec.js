@@ -1,10 +1,32 @@
-/*global matchers,jodajs,beforeEach,describe,it,expect*/
+/*global timeZone,jodajs,beforeEach,describe,it,expect*/
 describe('DateTimeFormat', function () {
     var DateTimeFormat = jodajs.DateTimeFormat,
         LocalDateTime = jodajs.LocalDateTime,
         LocalTime = jodajs.LocalTime,
         LocalDate = jodajs.LocalDate,
         ldt = LocalDateTime(2000, 7, 2, 3, 4, 5, 123);
+
+    describe('withLanguage', function () {
+        it('should set the language for text output', function () {
+            expect(DateTimeFormat.forPattern('E').withLanguage('en').print(ldt)).toBe('Sun');
+            expect(DateTimeFormat.forPattern('E').withLanguage('de').print(ldt)).toBe('So');
+        });
+    });
+
+    describe('withTimeZoneOffset', function () {
+        it('should set the offset to be used', function () {
+            expect(DateTimeFormat.forPattern('H').print(LocalTime(12, 0))).toBe('12');
+            expect(DateTimeFormat.forPattern('H').withTimeZoneOffset(0).print(LocalTime(12, 0))).toBe('' + (12 + timeZone / (60 * 60 * 1000)));
+            expect(DateTimeFormat.forPattern('H').withTimeZoneOffset(1).print(LocalTime(12, 0))).toBe('' + (11 + timeZone / (60 * 60 * 1000)));
+
+            expect(DateTimeFormat.forPattern('H').print(LocalDateTime(2000, 1, 2, 12, 0))).toBe('12');
+            expect(DateTimeFormat.forPattern('H').withTimeZoneOffset(0).print(LocalDateTime(2000, 1, 2, 12, 0))).toBe('' + (12 + timeZone / (60 * 60 * 1000)));
+            expect(DateTimeFormat.forPattern('H').withTimeZoneOffset(1).print(LocalDateTime(2000, 1, 2, 12, 0))).toBe('' + (11 + timeZone / (60 * 60 * 1000)));
+        });
+        it('should not affect LocalDate', function () {
+            expect(DateTimeFormat.forPattern('yyyy-MM-dd').withTimeZoneOffset(25).print(LocalDate(2000, 1, 1))).toBe('2000-01-01');
+        });
+    });
 
     describe('S', function () {
         it('should print millis of second', function () {
@@ -114,6 +136,8 @@ describe('DateTimeFormat', function () {
             expect(DateTimeFormat.forPattern('yyy').print(ldt)).toBe('2000');
             expect(DateTimeFormat.forPattern('yyyy').print(ldt)).toBe('2000');
             expect(DateTimeFormat.forPattern('yyyyy').print(ldt)).toBe('02000');
+
+            expect(DateTimeFormat.forPattern('yy').print(new LocalDate(-1, 1, 1))).toBe('01');
         });
     });
 
@@ -165,7 +189,6 @@ describe('DateTimeFormat', function () {
     describe('E', function () {
         it('should print day of week (text)', function () {
             expect(DateTimeFormat.forPattern('E').print(ldt)).toBe('Sun');
-            expect(DateTimeFormat.forPattern('E').withLanguage('de').print(ldt)).toBe('So');
             expect(DateTimeFormat.forPattern('EE').print(ldt)).toBe('Sun');
             expect(DateTimeFormat.forPattern('EEE').print(ldt)).toBe('Sun');
             expect(DateTimeFormat.forPattern('EEEE').print(ldt)).toBe('Sunday');
@@ -210,8 +233,17 @@ describe('DateTimeFormat', function () {
     describe('unknown letter', function () {
         it('should throw an Error', function () {
             expect(function () {
-                DateTimeFormat.forPattern('b')
+                DateTimeFormat.forPattern('b');
             }).toThrow();
+        });
+    });
+
+    describe('letter for unavailable field', function () {
+        it('should print as empty string', function () {
+            expect(DateTimeFormat.forPattern('H').print(LocalDate(2000, 1, 1))).toBe('');
+            expect(DateTimeFormat.forPattern('HHH').print(LocalDate(2000, 1, 1))).toBe('');
+            expect(DateTimeFormat.forPattern('y').print(LocalTime(10, 15))).toBe('');
+            expect(DateTimeFormat.forPattern('yyy').print(LocalTime(10, 15))).toBe('');
         });
     });
 

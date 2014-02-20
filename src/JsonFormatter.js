@@ -5,33 +5,43 @@ exports.JsonFormatter = function (formats) {
         defFormats = {
             LocalDateTime: "yyyy-MM-dd'T'HH:mm:ss.SSS",
             LocalDate: "yyyy-MM-dd",
-            LocalTime: "HH:mm:ss.SSS",
-            TimeZoneLocalDateTime: "yyyy-MM-dd'T'HH:mm:ss.SSS Z",
-            TimeZoneLocalDate: "yyyy-MM-dd Z",
-            TimeZoneLocalTime: "HH:mm:ss.SSS Z"
+            LocalTime: "HH:mm:ss.SSS"
         };
 
     for (prop in defFormats) {
         defFormats[prop] = DateTimeFormat.forPattern((formats && formats[prop]) || defFormats[prop]);
+        defFormats[prop + 'UTC'] = defFormats[prop].withTimeZoneOffset(0);
+    }
+
+    function isArray(obj) {
+        var ts = {}.toString;
+        return ts.call(obj) === '[object Array]';
+    }
+
+    function format(value, inUTC) {
+        var type = value && value.type;
+        if (type === 'LocalDateTime' || type === 'LocalDate' || type === 'LocalTime') {
+            return defFormats[type + (inUTC ? 'UTC' : '')].print(value);
+        }
+        if (value && typeof value === 'object') {
+            if (isArray(value)) {
+                return beforeStringify(value, [], inUTC);
+            }
+            return beforeStringify(value, {}, inUTC);
+        }
+        return value;
+    }
+
+    function beforeStringify(obj, target, inUTC) {
+        for (var prop in obj) {
+            target[prop] = format(obj[prop], inUTC);
+        }
+        return target;
     }
 
     return {
-        beforeStringify: function (obj, keepLocal) {
-            var prop, val, type;
-            for (prop in obj) {
-                val = obj[prop];
-                type = val && val.type;
-                if (type === 'LocalDateTime') {
-                    obj[prop] = defFormats.LocalDateTime.print(val);
-                } else if (type === 'LocalDate') {
-                    obj[prop] = defFormats.LocalDate.print(val);
-                } else if (type === 'LocalTime') {
-                    obj[prop] = defFormats.LocalTime.print(val);
-                } else if (val && typeof val === 'object') {
-                    this.beforeStringify(val, keepLocal);
-                }
-            }
-            return obj;
+        beforeStringify: function (obj, inUTC) {
+            return beforeStringify(obj, {}, inUTC);
         }
     };
 };
