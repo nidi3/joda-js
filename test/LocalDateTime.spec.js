@@ -251,8 +251,8 @@ describe('LocalDateTime', function () {
 
     describe('withWeekOfWeekyear', function () {
         it('should return a new LocalDate with the given week of weekyear', function () {
-            expect(LocalDate(2010, 1, 3).withWeekOfWeekyear(52)).toEq(LocalDate(2009, 12, 27));
-            expect(LocalDate(2010, 1, 4).withWeekOfWeekyear(2)).toEq(LocalDate(2010, 1, 11));
+            expect(LocalDateTime(2010, 1, 3, 4, 5, 6, 7).withWeekOfWeekyear(52)).toEq(LocalDateTime(2009, 12, 27, 4, 5, 6, 7));
+            expect(LocalDateTime(2010, 1, 4).withWeekOfWeekyear(2)).toEq(LocalDateTime(2010, 1, 11));
         });
     });
 
@@ -273,8 +273,8 @@ describe('LocalDateTime', function () {
 
     describe('withWeekyear', function () {
         it('should return a new LocalDate with the given week of weekyear', function () {
-            expect(LocalDate(2010, 1, 3).withWeekyear(2010)).toEq(LocalDate(2011, 1, 2));
-            expect(LocalDate(2010, 1, 4).withWeekyear(2011)).toEq(LocalDate(2011, 1, 3));
+            expect(LocalDateTime(2010, 1, 3, 4, 5, 6, 7).withWeekyear(2010)).toEq(LocalDateTime(2011, 1, 2, 4, 5, 6, 7));
+            expect(LocalDateTime(2010, 1, 4).withWeekyear(2011)).toEq(LocalDateTime(2011, 1, 3));
         });
     });
 

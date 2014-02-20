@@ -7,7 +7,7 @@ exports.DateTimeFormat = function () {
     };
 };
 
-(function () {
+(function (LocalDate) {
     function parsePatternTo(builder, pattern) {
         var tokenPos;
 
@@ -117,12 +117,12 @@ exports.DateTimeFormat = function () {
                     // Use pivots which are compatible with SimpleDateFormat.
                     switch (c) {
                     case 'x':
-                        builder.twoDigitWeekyear(new DateTime().getWeekyear() - 30, lenientParse);
+                        builder.twoDigitWeekyear(LocalDate.now().getWeekyear() - 30, lenientParse);
                         break;
                     case 'y':
                     case 'Y':
                     default:
-                        builder.twoDigitYear(new DateTime().getYear() - 30, lenientParse);
+                        builder.twoDigitYear(LocalDate.now().getYear() - 30, lenientParse);
                         break;
                     }
                 } else {
@@ -204,6 +204,22 @@ exports.DateTimeFormat = function () {
             case 'w': // week of weekyear (number)
                 builder.weekOfWeekyear(tokenLen);
                 break;
+            case 'z': // time zone (text)
+                if (tokenLen >= 4) {
+                    //builder.zimeZoneName();
+                } else {
+                    builder.timeZoneShortText();
+                }
+                break;
+            case 'Z': // time zone offset
+                if (tokenLen === 1) {
+                    builder.timeZoneOffset(false);
+                } else if (tokenLen === 2) {
+                    builder.timeZoneOffset(true);
+                } else {
+                    //builder.timeZoneId();
+                }
+                break;
             case "'": // literal text
                 sub = token.substring(1);
                 builder.literal(sub);
@@ -219,4 +235,4 @@ exports.DateTimeFormat = function () {
         parsePatternTo(builder, pattern);
         return builder.toFormatter();
     };
-}());
+}(exports.LocalDate));

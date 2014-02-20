@@ -146,6 +146,21 @@ describe('DateTimeFormat', function () {
         });
     });
 
+    describe('Z', function () {
+        it('should print time zone offset', function () {
+            expect(DateTimeFormat.forPattern('Z').print(LocalDate(2010, 1, 3))).toMatch(/\+|-\d{4}/);
+            expect(DateTimeFormat.forPattern('ZZ').print(LocalDate(2010, 1, 3))).toMatch(/\+|-\d{2}:\d{2}/);
+            expect(DateTimeFormat.forPattern('ZZZ').print(LocalDate(2010, 1, 3))).toBe('');
+        });
+    });
+
+    describe('z', function () {
+        it('should print time zone', function () {
+            expect(DateTimeFormat.forPattern('z').print(LocalDate(2010, 1, 3))).toMatch(/\w{3}/);
+            expect(DateTimeFormat.forPattern('zz').print(LocalDate(2010, 1, 3))).toMatch(/\w{3}/);
+        });
+    });
+
     describe('non letter', function () {
         it('should print literal', function () {
             expect(DateTimeFormat.forPattern('+"*ç%').print(LocalDate(2010, 1, 3))).toBe('+"*ç%');

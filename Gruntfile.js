@@ -2,8 +2,9 @@ module.exports = function (grunt) {
     var JASMINE_DIR = 'test-jasmine',
         JASMINE_PORT = 9999,
         DIST_DIR = 'dist',
-        SOURCES = ['src/DateTimeUtils.js', 'src/translations.js', 'src/ISOChronology.js', 'src/DateTimeFormatter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js',
-            'src/localFactory.js', 'src/LocalDateTime.js', 'src/LocalDate.js', 'src/LocalTime.js'],
+        SOURCES = ['src/DateTimeUtils.js', 'src/translations.js', 'src/ISOChronology.js',
+            'src/localFactory.js', 'src/LocalDateTime.js', 'src/LocalDate.js', 'src/LocalTime.js',
+            'src/DateTimeFormatter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js'],
 
         browsers = [
             {browserName: "internet explorer", version: "6", platform: "XP"},

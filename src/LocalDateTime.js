@@ -42,7 +42,6 @@ exports.LocalDateTime = (function () {
                 }
             };
 
-            localFactory.addCons(LocalDateTime);
             localFactory.addBasic(self, date, chrono);
             localFactory.addDate(self, date, chrono, LocalDateTime.fromMillisUTC);
             localFactory.addTime(self, date, chrono, LocalDateTime.fromMillisUTC);
@@ -50,6 +49,7 @@ exports.LocalDateTime = (function () {
             return self;
         };
 
+    localFactory.addCons(LocalDateTime);
 
     LocalDateTime.fromDate = function (date) {
         return LocalDateTime(date.getFullYear(), date.getMonth() + 1, date.getDate(), date.getHours(), date.getMinutes(), date.getSeconds(), date.getMilliseconds());

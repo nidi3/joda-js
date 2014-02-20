@@ -55,6 +55,9 @@ exports.ISOChronology = (function () {
             get: function (date) {
                 return date.getUTCMonth() + 1;
             },
+            getText: function (date, language, short) {
+                return translations.get(language, 'month' + (short ? 'Short' : 'Long'))[self.monthOfYear.get(date) - 1];
+            },
             set: function (date, month) {
                 return withNormalizedDay(dateWithField(date, 'Month', month - 1), self.dayOfMonth.get(date));
             }
@@ -129,6 +132,9 @@ exports.ISOChronology = (function () {
                 var day = date.getUTCDay();
                 return day === 0 ? 7 : day;
             },
+            getText: function (date, language, short) {
+                return translations.get(language, 'day' + (short ? 'Short' : 'Long'))[self.dayOfWeek.get(date) - 1];
+            },
             set: function (date, dayOfWeek) {
                 return new Date(date.getTime() + (dayOfWeek - this.get(date)) * DAY_IN_MILLIS);
             }
@@ -175,7 +181,7 @@ exports.ISOChronology = (function () {
         },
 
         halfdayOfDay: {
-            get: function (date, language) {
+            getText: function (date, language) {
                 return translations.get(language, 'halfday')[self.hourOfDay.get(date) < 12 ? 0 : 1];
             }
         },
@@ -200,24 +206,16 @@ exports.ISOChronology = (function () {
             }
         },
 
-        monthOfYearText: {
-            get: function (date, language) {
-                return translations.get(language, 'monthLong')[self.monthOfYear.get(date) - 1];
-            }
-        },
-        monthOfYearShortText: {
-            get: function (date, language) {
-                return translations.get(language, 'monthShort')[self.monthOfYear.get(date) - 1];
-            }
-        },
-        dayOfWeekText: {
-            get: function (date, language) {
-                return translations.get(language, 'dayLong')[self.dayOfWeek.get(date) - 1];
-            }
-        },
-        dayOfWeekShortText: {
-            get: function (date, language) {
-                return translations.get(language, 'dayShort')[self.dayOfWeek.get(date) - 1];
+        timeZone: {
+            get: function (date) {
+                return date.getTimezoneOffset() * MINUTE_IN_MILLIS;
+            },
+            getText: function (date, language, short) {
+                if (!short) {
+                    return '';
+                }
+                var parse = /\((.+?)\)$/.exec(new Date().toString());
+                return parse ? parse[1] : '';
             }
         },
 

@@ -25,11 +25,12 @@ exports.LocalDate = (function () {
                 }
             };
 
-            localFactory.addCons(LocalDate);
             localFactory.addBasic(self, date, chrono);
             localFactory.addDate(self, date, chrono, LocalDate.fromDateUTC);
             return self;
         };
+
+    localFactory.addCons(LocalDate);
 
     LocalDate.fromDate = function (date) {
         return LocalDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
