@@ -68,11 +68,11 @@ exports.DateTimeFormat = function () {
                     // Use pivots which are compatible with SimpleDateFormat.
                     switch (c) {
                     case 'x':
-                        builder.twoDigitWeekyear(jodajs.LocalDate.now().getWeekyear() - 30);
+                        builder.twoDigitWeekyear(exports.LocalDate.now().getWeekyear() - 30);
                         break;
                     case 'y':
                     case 'Y':
-                        builder.twoDigitYear(jodajs.LocalDate.now().getYear() - 30);
+                        builder.twoDigitYear(exports.LocalDate.now().getYear() - 30);
                         break;
                     }
                 } else {

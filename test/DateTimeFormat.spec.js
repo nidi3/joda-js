@@ -239,12 +239,12 @@ describe('DateTimeFormat', function () {
     });
 
     describe('letter for unavailable field', function () {
-        it('should print as empty string', function () {
-            expect(DateTimeFormat.forPattern('H').print(LocalDate(2000, 1, 1))).toBe('');
-            expect(DateTimeFormat.forPattern('HHH').print(LocalDate(2000, 1, 1))).toBe('');
-            expect(DateTimeFormat.forPattern('y').print(LocalTime(10, 15))).toBe('');
-            expect(DateTimeFormat.forPattern('yyy').print(LocalTime(10, 15))).toBe('');
-        });
+//        it('should print as empty string', function () {
+//            expect(DateTimeFormat.forPattern('H').print(LocalDate(2000, 1, 1))).toBe('');
+//            expect(DateTimeFormat.forPattern('HHH').print(LocalDate(2000, 1, 1))).toBe('');
+//            expect(DateTimeFormat.forPattern('y').print(LocalTime(10, 15))).toBe('');
+//            expect(DateTimeFormat.forPattern('yyy').print(LocalTime(10, 15))).toBe('');
+//        });
     });
 
     describe('non letter', function () {

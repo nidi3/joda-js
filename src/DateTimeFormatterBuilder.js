@@ -1,6 +1,6 @@
 /*globals exports*/
 exports.DateTimeFormatterBuilder = function () {
-    var parsers = [], formatters = [], self;
+    var parsers = [], printers = [], self;
 
     function pad(value, len, fn) {
         value = '' + value;
@@ -30,9 +30,8 @@ exports.DateTimeFormatterBuilder = function () {
         parsers.push(function (obj) {
 
         });
-        formatters.push(function (obj) {
-            var property = obj.getProperty(field),
-                res = property.field.get(property.date);
+        printers.push(function (obj) {
+            var res = obj.chrono[field].get(obj.date);
             return padLeft(res, minPrinted);
         });
         return self;
@@ -42,9 +41,8 @@ exports.DateTimeFormatterBuilder = function () {
         parsers.push(function (obj) {
 
         });
-        formatters.push(function (obj) {
-            var property = obj.getProperty(field),
-                year = property.field.get(property.date),
+        printers.push(function (obj) {
+            var year = obj.chrono[field].get(obj.date),
                 res = year < 0 ? -year : year;
             return padLeft(res % 100, 2);
         });
@@ -55,9 +53,8 @@ exports.DateTimeFormatterBuilder = function () {
         parsers.push(function (obj) {
 
         });
-        formatters.push(function (obj, language) {
-            var property = obj.getProperty(field),
-                res = property.field.getText(property.date, language, short);
+        printers.push(function (obj, language) {
+            var res = obj.chrono[field].getText(obj.date, language, short);
             return res;
         });
         return self;
@@ -67,9 +64,8 @@ exports.DateTimeFormatterBuilder = function () {
         parsers.push(function (obj) {
 
         });
-        formatters.push(function (obj) {
-            var property = obj.getProperty('timeZone'),
-                res = property.field.get(property.date),
+        printers.push(function (obj) {
+            var res = obj.chrono['timeZone'].get(obj.date),
                 absRes = Math.abs(res),
                 h = padLeft(absRes / (60 * 60 * 1000), 2),
                 m = padLeft(absRes % (60 * 1000), 2);
@@ -82,9 +78,8 @@ exports.DateTimeFormatterBuilder = function () {
         parsers.push(function (obj) {
 
         });
-        formatters.push(function (obj) {
-            var property = obj.getProperty(field),
-                res = property.field.remainder(property.date);
+        printers.push(function (obj) {
+            var res = obj.chrono[field].remainder(obj.date);
             return padRight(cutRight(padLeft(res, 3), maxDigits), minDigits);
         });
         return self;
@@ -92,7 +87,7 @@ exports.DateTimeFormatterBuilder = function () {
 
     function literal(text) {
         parsers.push({});
-        formatters.push(function (obj) {
+        printers.push(function (obj) {
             return text;
         });
         return self;
@@ -131,7 +126,11 @@ exports.DateTimeFormatterBuilder = function () {
         },
 
         toFormatter: function () {
-            return new exports.DateTimeFormatter(formatters);
+            return exports.DateTimePrinter(printers);
+        },
+
+        toParser: function () {
+            return exports.DateTimeParser(parsers);
         }
     };
     var i,

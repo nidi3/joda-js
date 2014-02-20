@@ -1,38 +1,39 @@
 /*globals exports,localFactory*/
-exports.LocalDate = (function () {
-    var chrono = exports.DefaultChronology,
-        LocalDate = function (year, monthOfYear, dayOfMonth) {
-            var date = chrono.dateOfDate(year, monthOfYear, dayOfMonth),
-                self = {
-                    compareTo: function (other) {
-                        var res = this.getYear() - other.getYear();
-                        if (res === 0) {
-                            res = this.getMonthOfYear() - other.getMonthOfYear();
-                        }
-                        if (res === 0) {
-                            res = this.getDayOfMonth() - other.getDayOfMonth();
-                        }
-                        return res;
-                    },
+exports.LocalDate = (function (chrono) {
+    var LocalDate = function (year, monthOfYear, dayOfMonth) {
+            if (!(this instanceof LocalDate)) {
+                return new LocalDate(year, monthOfYear, dayOfMonth);
+            }
+            this.chrono = chrono;
+            this.date = this.chrono.dateOfDate(year, monthOfYear, dayOfMonth);
+        },
+        proto = LocalDate.prototype;
 
-                    toDate: function () {
-                        return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth());
-                    }
-                };
+    proto.compareTo = function (other) {
+        var res = this.getYear() - other.getYear();
+        if (res === 0) {
+            res = this.getMonthOfYear() - other.getMonthOfYear();
+        }
+        if (res === 0) {
+            res = this.getDayOfMonth() - other.getDayOfMonth();
+        }
+        return res;
+    };
 
-            localFactory.addBasic(self, 'LocalDate', date, chrono, 'yyyy-MM-dd');
-            localFactory.addDate(self, date, chrono, LocalDate.fromDateUTC);
-            return self;
-        };
+    proto.toDate = function () {
+        return new Date(this.getYear(), this.getMonthOfYear() - 1, this.getDayOfMonth());
+    };
 
-    localFactory.addCons(LocalDate);
-
-    LocalDate.fromDate = function (date) {
+    proto.fromDate = LocalDate.fromDate = function (date) {
         return LocalDate(date.getFullYear(), date.getMonth() + 1, date.getDate());
     };
-    LocalDate.fromDateUTC = function (date) {
+    proto.fromDateUTC = LocalDate.fromDateUTC = function (date) {
         return LocalDate(chrono.year.get(date), chrono.monthOfYear.get(date), chrono.dayOfMonth.get(date));
     };
 
+    localFactory.addStatic(LocalDate);
+    localFactory.addBasic(proto,'LocalDate', 'yyyy-MM-dd');
+    localFactory.addDate(proto);
+
     return LocalDate;
-}());
+}(exports.DefaultChronology));

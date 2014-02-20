@@ -1,6 +1,6 @@
 /*globals exports*/
-exports.DateTimeFormatter = function (formatters, language, timeZoneOffset) {
-    var DateTimeFormatter = exports.DateTimeFormatter,
+exports.DateTimePrinter = function (formatters, language, timeZoneOffset) {
+    var DateTimePrinter = exports.DateTimePrinter,
         lang = language || 'en',
         offset = (timeZoneOffset !== undefined && timeZoneOffset !== null)
             ? new Date().getTimezoneOffset() * 60 * 1000 - timeZoneOffset
@@ -8,10 +8,10 @@ exports.DateTimeFormatter = function (formatters, language, timeZoneOffset) {
 
     return {
         withLanguage: function (language) {
-            return DateTimeFormatter(formatters, language, offset);
+            return DateTimePrinter(formatters, language, offset);
         },
         withTimeZoneOffset: function (offset) {
-            return DateTimeFormatter(formatters, language, offset);
+            return DateTimePrinter(formatters, language, offset);
         },
         print: function (obj) {
             var i, res = '';

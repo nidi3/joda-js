@@ -3,7 +3,7 @@ module.exports = function (grunt) {
         JASMINE_PORT = 9999,
         DIST_DIR = 'dist',
         SOURCES = ['src/DateTimeUtils.js', 'src/translations.js', 'src/DefaultChronology.js',
-            'src/DateTimeFormatter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js',
+            'src/DateTimePrinter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js',
             'src/localFactory.js', 'src/LocalDateTime.js', 'src/LocalDate.js', 'src/LocalTime.js',
             'src/JsonFormatter.js'],
 

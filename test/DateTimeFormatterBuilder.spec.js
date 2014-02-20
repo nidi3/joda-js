@@ -17,7 +17,7 @@ describe('DateTimeFormatterBuilder', function () {
     });
 
     describe('fractionOfSecond', function () {
-        it('should add a fraction of second field', function () {
+        it('should print fractions of second', function () {
             expect(DateTimeFormatterBuilder().fractionOfSecond(1, 1).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('0');
             expect(DateTimeFormatterBuilder().fractionOfSecond(1, 2).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('01');
             expect(DateTimeFormatterBuilder().fractionOfSecond(1, 3).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
@@ -28,6 +28,9 @@ describe('DateTimeFormatterBuilder', function () {
             expect(DateTimeFormatterBuilder().fractionOfSecond(2, 4).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('012');
 
             expect(DateTimeFormatterBuilder().fractionOfSecond(4, 4).toFormatter().print(LocalTime(10, 15, 4, 12))).toBe('0120');
+        });
+        it('should parse fractions of second', function () {
+           // expect(DateTimeFormatterBuilder().fractionOfSecond(1, 1).toParser().parse('0')).toEq('0');
         });
     });
 
