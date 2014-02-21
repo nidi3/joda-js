@@ -1,4 +1,4 @@
-/*globals exports,forEach*/
+/*globals exports,forEach,map*/
 var localFactory = (function (DateTimeUtils, DateTimeFormat) {
     function accessor(name, field) {
         return name + field.substring(0, 1).toUpperCase() + field.substring(1);
@@ -23,34 +23,20 @@ var localFactory = (function (DateTimeUtils, DateTimeFormat) {
     }
 
     return {
-        addBasic: function (target, type, defaultPattern) {
-            target = target.prototype;
-            var defaultFormat = DateTimeFormat.forPattern(defaultPattern);
+        addBasic: function (target, chrono, type, defaultPattern, fields) {
+            var defaultFormat = DateTimeFormat.forPattern(defaultPattern),
+                proto = target.prototype;
 
-            target.type = type;
-            target.isEqual = function (other) {
-                return this.compareTo(other) === 0;
+            proto.chrono = chrono;
+            target.fromDateUTC = proto.fromDateUTC = function (date) {
+                var chrono = this.chrono || this.prototype.chrono;
+                return target.apply(null, map(fields, function (f) {
+                    return chrono[f].get(date);
+                }));
             };
-            target.isBefore = function (other) {
-                return this.compareTo(other) < 0;
-            };
-            target.isAfter = function (other) {
-                return this.compareTo(other) > 0;
-            };
-            target.toString = function (pattern, language) {
-                var format = defaultFormat;
-                if (pattern) {
-                    format = DateTimeFormat.forPattern(pattern);
-                    if (language) {
-                        format = format.withLanguage(language);
-                    }
-                }
-                return format.print(this);
-            };
-        },
-        addStatic: function (target) {
-            target.fromDate = target.prototype.fromDate;
-            target.fromDateUTC = target.prototype.fromDateUTC;
+
+            target.fromDate = proto.fromDate;
+
             target.fromMillis = function (millis) {
                 return this.fromDate(new Date(millis));
             };
@@ -63,6 +49,40 @@ var localFactory = (function (DateTimeUtils, DateTimeFormat) {
             target.nowUTC = function () {
                 return this.fromMillisUTC(DateTimeUtils.currentTimeMillis());
             };
+
+
+            proto.type = type;
+            proto.compareTo = function (other) {
+                var i, res, acc;
+                for (i = 0; i < fields.length; i += 1) {
+                    acc = accessor('get', fields[i]);
+                    res = this[acc]() - other[acc]();
+                    if (res !== 0) {
+                        return res;
+                    }
+                }
+                return 0;
+            };
+            proto.isEqual = function (other) {
+                return this.compareTo(other) === 0;
+            };
+            proto.isBefore = function (other) {
+                return this.compareTo(other) < 0;
+            };
+            proto.isAfter = function (other) {
+                return this.compareTo(other) > 0;
+            };
+            proto.toString = function (pattern, language) {
+                var format = defaultFormat;
+                if (pattern) {
+                    format = DateTimeFormat.forPattern(pattern);
+                    if (language) {
+                        format = format.withLanguage(language);
+                    }
+                }
+                return format.print(this);
+            };
+
         },
         addDate: function (target) {
             target = target.prototype;
