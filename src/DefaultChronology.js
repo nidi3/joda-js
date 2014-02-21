@@ -15,6 +15,25 @@ exports.DefaultChronology = (function () {
         return d;
     }
 
+    function simpleGetAndSet(field) {
+        return {
+            get: function (date) {
+                return date['getUTC' + field]();
+            },
+            set: function (date, value) {
+                return dateWithField(date, field, value);
+            }
+        };
+    }
+
+    function simpleAdd(millis) {
+        return {
+            add: function (date, value) {
+                return new Date(date.getTime() + value * millis);
+            }
+        };
+    }
+
     function startOfYear(year) {
         return dateWithField(0, 'FullYear', year);
     }
@@ -153,14 +172,7 @@ exports.DefaultChronology = (function () {
                 return self.dayOfWeek.set(res, thisDow);
             }
         },
-        dayOfMonth: {
-            get: function (date) {
-                return date.getUTCDate();
-            },
-            set: function (date, dayOfMonth) {
-                return dateWithField(date, 'Date', dayOfMonth);
-            }
-        },
+        dayOfMonth: simpleGetAndSet('Date'),
         dayOfWeek: {
             get: function (date) {
                 var day = date.getUTCDay();
@@ -181,38 +193,10 @@ exports.DefaultChronology = (function () {
                 return new Date(self.dayOfMonth.set(self.monthOfYear.set(date, 1), 1).getTime() + (dayOfYear - 1) * DAY_IN_MILLIS);
             }
         },
-        hourOfDay: {
-            get: function (date) {
-                return date.getUTCHours();
-            },
-            set: function (date, hourOfDay) {
-                return dateWithField(date, 'Hours', hourOfDay);
-            }
-        },
-        minuteOfHour: {
-            get: function (date) {
-                return date.getUTCMinutes();
-            },
-            set: function (date, minuteOfHour) {
-                return dateWithField(date, 'Minutes', minuteOfHour);
-            }
-        },
-        secondOfMinute: {
-            get: function (date) {
-                return date.getUTCSeconds();
-            },
-            set: function (date, secondOfMinute) {
-                return dateWithField(date, 'Seconds', secondOfMinute);
-            }
-        },
-        millisOfSecond: {
-            get: function (date) {
-                return date.getUTCMilliseconds();
-            },
-            set: function (date, millisOfSecond) {
-                return dateWithField(date, 'Milliseconds', millisOfSecond);
-            }
-        },
+        hourOfDay: simpleGetAndSet('Hours'),
+        minuteOfHour: simpleGetAndSet('Minutes'),
+        secondOfMinute: simpleGetAndSet('Seconds'),
+        millisOfSecond: simpleGetAndSet('Milliseconds'),
 
         halfdayOfDay: {
             getText: function (date, language) {
@@ -270,31 +254,11 @@ exports.DefaultChronology = (function () {
                 return withNormalizedDay(d, self.dayOfMonth.get(date));
             }
         },
-        weeks: {
-            add: function (date, weeks) {
-                return new Date(date.getTime() + weeks * WEEK_IN_MILLIS);
-            }
-        },
-        days: {
-            add: function (date, days) {
-                return new Date(date.getTime() + days * DAY_IN_MILLIS);
-            }
-        },
-        hours: {
-            add: function (date, hours) {
-                return new Date(date.getTime() + hours * HOUR_IN_MILLIS);
-            }
-        },
-        minutes: {
-            add: function (date, minutes) {
-                return new Date(date.getTime() + minutes * MINUTE_IN_MILLIS);
-            }
-        },
-        seconds: {
-            add: function (date, seconds) {
-                return new Date(date.getTime() + seconds * SECOND_IN_MILLIS);
-            }
-        },
+        weeks: simpleAdd(WEEK_IN_MILLIS),
+        days: simpleAdd(DAY_IN_MILLIS),
+        hours: simpleAdd(HOUR_IN_MILLIS),
+        minutes: simpleAdd(MINUTE_IN_MILLIS),
+        seconds: simpleAdd(SECOND_IN_MILLIS),
         millis: {
             add: function (date, millis) {
                 return new Date(date.getTime() + millis);

@@ -13,10 +13,17 @@ function extend(constructorFn, proto) {
 }
 
 
-function forEach(fields, fn) {
-    for (var i = 0; i < fields.length; i += 1) {
-        fn(fields[i]);
+function forEach(arr, fn) {
+    for (var i = 0; i < arr.length; i += 1) {
+        fn(arr[i]);
     }
+}
+function map(arr, fn) {
+    var i, res = [];
+    for (i = 0; i < arr.length; i += 1) {
+        res[i] = fn(arr[i]);
+    }
+    return res;
 }
 
 function pad(value, len, fn) {
