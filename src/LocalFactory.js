@@ -1,4 +1,4 @@
-/*globals exports*/
+/*globals exports,forEach*/
 var localFactory = (function (DateTimeUtils, DateTimeFormat) {
     function accessor(name, field) {
         return name + field.substring(0, 1).toUpperCase() + field.substring(1);
@@ -22,14 +22,9 @@ var localFactory = (function (DateTimeUtils, DateTimeFormat) {
         };
     }
 
-    function forEach(fields, fn) {
-        for (var i = 0; i < fields.length; i += 1) {
-            fn(fields[i]);
-        }
-    }
-
     return {
         addBasic: function (target, type, defaultPattern) {
+            target = target.prototype;
             var defaultFormat = DateTimeFormat.forPattern(defaultPattern);
 
             target.type = type;
@@ -54,6 +49,8 @@ var localFactory = (function (DateTimeUtils, DateTimeFormat) {
             };
         },
         addStatic: function (target) {
+            target.fromDate = target.prototype.fromDate;
+            target.fromDateUTC = target.prototype.fromDateUTC;
             target.fromMillis = function (millis) {
                 return this.fromDate(new Date(millis));
             };
@@ -68,6 +65,8 @@ var localFactory = (function (DateTimeUtils, DateTimeFormat) {
             };
         },
         addDate: function (target) {
+            target = target.prototype;
+
             forEach(['dayOfMonth', 'dayOfWeek', 'dayOfYear', 'weekOfWeekyear', 'weekyear', 'monthOfYear', 'year'], function (field) {
                 addGetAndWith(target, field);
             });
@@ -76,6 +75,8 @@ var localFactory = (function (DateTimeUtils, DateTimeFormat) {
             });
         },
         addTime: function (target) {
+            target = target.prototype;
+
             forEach(['millisOfSecond', 'secondOfMinute', 'minuteOfHour', 'hourOfDay'], function (field) {
                 addGetAndWith(target, field);
             });
