@@ -1,13 +1,5 @@
-/*globals exports,jodajs*/
-exports.DateTimeFormat = function () {
-
-
-    return {
-
-    };
-};
-
-(function () {
+/*globals exports*/
+exports.DateTimeFormat = (function () {
     function parsePatternTo(builder, pattern) {
         var tokenPos;
 
@@ -177,9 +169,11 @@ exports.DateTimeFormat = function () {
         }
     }
 
-    exports.DateTimeFormat.forPattern = function (pattern) {
-        var builder = new exports.DateTimeFormatterBuilder();
-        parsePatternTo(builder, pattern);
-        return builder.toFormatter();
+    return {
+        forPattern: function (pattern) {
+            var builder = new exports.DateTimeFormatterBuilder();
+            parsePatternTo(builder, pattern);
+            return builder.toFormatter();
+        }
     };
 }());

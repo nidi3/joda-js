@@ -24,10 +24,7 @@ exports.JsonFormatter = function (formats) {
             return defFormats[type + (inUTC ? 'UTC' : '')].print(value);
         }
         if (value && typeof value === 'object') {
-            if (isArray(value)) {
-                return beforeStringify(value, [], inUTC);
-            }
-            return beforeStringify(value, {}, inUTC);
+            return beforeStringify(value, isArray(value) ? [] : {}, inUTC);
         }
         return value;
     }

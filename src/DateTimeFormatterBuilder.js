@@ -1,155 +1,116 @@
-/*globals exports*/
-exports.DateTimeFormatterBuilder = function () {
-    var parsers = [], printers = [], self;
+/*globals exports,forEach,padLeft,padRight,cutRight,extend*/
+exports.DateTimeFormatterBuilder = (function () {
+    var proto = {
+            numberFormatter: function (field, minPrinted, maxParsed) {
+                this.parsers.push(function (obj) {
 
-    function pad(value, len, fn) {
-        value = '' + value;
-        while (value.length < len) {
-            value = fn(value);
-        }
-        return value;
-    }
+                });
+                this.printers.push(function (obj) {
+                    var res = obj.chrono[field].get(obj.date);
+                    return padLeft(res, minPrinted);
+                });
+                return this;
+            },
+            fractionFormatter: function (field, minDigits, maxDigits) {
+                this.parsers.push(function (obj) {
 
-    function padLeft(value, len) {
-        return pad(value, len, function (value) {
-            return '0' + value;
-        });
-    }
+                });
+                this.printers.push(function (obj) {
+                    var res = obj.chrono[field].remainder(obj.date);
+                    return padRight(cutRight(padLeft(res, 3), maxDigits), minDigits);
+                });
+                return this;
+            },
+            twoDigitYearFormatter: function (field, pivot, lenientParse) {
+                this.parsers.push(function (obj) {
 
-    function padRight(value, len) {
-        return pad(value, len, function (value) {
-            return value + '0';
-        });
-    }
+                });
+                this.printers.push(function (obj) {
+                    var year = obj.chrono[field].get(obj.date),
+                        res = year < 0 ? -year : year;
+                    return padLeft(res % 100, 2);
+                });
+                return this;
+            },
+            textFormatter: function (field, short) {
+                this.parsers.push(function (obj) {
 
-    function cutRight(value, len) {
-        return value.substring(0, len);
-    }
+                });
+                this.printers.push(function (obj, language) {
+                    var res = obj.chrono[field].getText(obj.date, language, short);
+                    return res;
+                });
+                return this;
+            },
+            millisOfSecond: function (minDigits) {
+                return this.numberFormatter('millisOfSecond', minDigits, 3);
+            },
+            fractionOfSecond: function (minDigits, maxDigits) {
+                return this.fractionFormatter('millis', minDigits, maxDigits);
+            },
+            timeZoneOffset: function (withSeparator) {
+                this.parsers.push(function (obj) {
 
-    function number(field, minPrinted, maxParsed) {
-        parsers.push(function (obj) {
+                });
+                this.printers.push(function (obj) {
+                    var res = obj.chrono['timeZone'].get(obj.date),
+                        absRes = Math.abs(res),
+                        h = padLeft(absRes / (60 * 60 * 1000), 2),
+                        m = padLeft(absRes % (60 * 1000), 2);
+                    return (res >= 0 ? '+' : '-') + h + (withSeparator ? ':' : '') + m;
+                });
+                return this;
+            },
+            twoDigitYear: function (pivot, lenientParse) {
+                return this.twoDigitYearFormatter('year', pivot, lenientParse);
+            },
+            twoDigitWeekyear: function (pivot, lenientParse) {
+                return this.twoDigitYearFormatter('weekyear', pivot, lenientParse);
+            },
+            literal: function (text) {
+                this.parsers.push({});
+                this.printers.push(function () {
+                    return text;
+                });
+                return this;
+            },
 
-        });
-        printers.push(function (obj) {
-            var res = obj.chrono[field].get(obj.date);
-            return padLeft(res, minPrinted);
-        });
-        return self;
-    }
+            toFormatter: function () {
+                return exports.DateTimePrinter(this.printers);
+            },
 
-    function twoDigitYearNumber(field, pivot, lenientParse) {
-        parsers.push(function (obj) {
-
-        });
-        printers.push(function (obj) {
-            var year = obj.chrono[field].get(obj.date),
-                res = year < 0 ? -year : year;
-            return padLeft(res % 100, 2);
-        });
-        return self;
-    }
-
-    function text(field, short) {
-        parsers.push(function (obj) {
-
-        });
-        printers.push(function (obj, language) {
-            var res = obj.chrono[field].getText(obj.date, language, short);
-            return res;
-        });
-        return self;
-    }
-
-    function timeZone(withSeparator) {
-        parsers.push(function (obj) {
-
-        });
-        printers.push(function (obj) {
-            var res = obj.chrono['timeZone'].get(obj.date),
-                absRes = Math.abs(res),
-                h = padLeft(absRes / (60 * 60 * 1000), 2),
-                m = padLeft(absRes % (60 * 1000), 2);
-            return (res >= 0 ? '+' : '-') + h + (withSeparator ? ':' : '') + m;
-        });
-        return self;
-    }
-
-    function fraction(field, minDigits, maxDigits) {
-        parsers.push(function (obj) {
-
-        });
-        printers.push(function (obj) {
-            var res = obj.chrono[field].remainder(obj.date);
-            return padRight(cutRight(padLeft(res, 3), maxDigits), minDigits);
-        });
-        return self;
-    }
-
-    function literal(text) {
-        parsers.push({});
-        printers.push(function (obj) {
-            return text;
-        });
-        return self;
-    }
-
-    function addNumber(target, field) {
-        target[field] = function (minDigits) {
-            return number(field, minDigits);
-        };
-    }
+            toParser: function () {
+                return exports.DateTimeParser(this.parsers);
+            }
+        },
+        DateTimeFormatterBuilder = extend(function () {
+            this.parsers = [];
+            this.printers = [];
+        }, proto);
 
     function addText(target, field, short) {
         target[field + (short ? 'Short' : '') + 'Text'] = function () {
-            return text(field, short);
+            return this.textFormatter(field, short);
         };
     }
 
-    self = {
-        millisOfSecond: function (minDigits) {
-            return number('millisOfSecond', minDigits, 3);
-        },
-        fractionOfSecond: function (minDigits, maxDigits) {
-            return fraction('millis', minDigits, maxDigits);
-        },
-        timeZoneOffset: function (withSeparator) {
-            return timeZone(withSeparator);
-        },
-        twoDigitYear: function (pivot, lenientParse) {
-            return twoDigitYearNumber('year', pivot, lenientParse);
-        },
-        twoDigitWeekyear: function (pivot, lenientParse) {
-            return twoDigitYearNumber('weekyear', pivot, lenientParse);
-        },
-        literal: function (text) {
-            return literal(text);
-        },
+    forEach(['secondOfMinute', 'minuteOfHour', 'hourOfDay', 'clockhourOfDay', 'hourOfHalfday', 'clockhourOfHalfday', 'dayOfMonth', 'dayOfWeek', 'dayOfYear', 'monthOfYear', 'weekOfWeekyear', 'weekyear', 'year', 'yearOfEra', 'centuryOfEra'], function (field) {
+        proto[field] = function (minDigits) {
+            return this.numberFormatter(field, minDigits);
+        };
+    });
+    forEach([
+        ['dayOfWeek', true],
+        ['dayOfWeek', false],
+        ['monthOfYear', true],
+        ['monthOfYear', false],
+        ['halfdayOfDay', false],
+        ['timeZone', true],
+        ['era', false]
+    ], function (fieldAndLen) {
+        addText(proto, fieldAndLen[0], fieldAndLen[1]);
+    });
 
-        toFormatter: function () {
-            return exports.DateTimePrinter(printers);
-        },
+    return DateTimeFormatterBuilder;
 
-        toParser: function () {
-            return exports.DateTimeParser(parsers);
-        }
-    };
-    var i,
-        numberFields = ['secondOfMinute', 'minuteOfHour', 'hourOfDay', 'clockhourOfDay', 'hourOfHalfday', 'clockhourOfHalfday', 'dayOfMonth', 'dayOfWeek', 'dayOfYear', 'monthOfYear', 'weekOfWeekyear', 'weekyear', 'year', 'yearOfEra', 'centuryOfEra'],
-        textFields = [
-            ['dayOfWeek', true],
-            ['dayOfWeek', false],
-            ['monthOfYear', true],
-            ['monthOfYear', false],
-            ['halfdayOfDay', false],
-            ['timeZone', true],
-            ['era', false]
-        ];
-    for (i = 0; i < numberFields.length; i += 1) {
-        addNumber(self, numberFields[i]);
-    }
-    for (i = 0; i < textFields.length; i += 1) {
-        addText(self, textFields[i][0], textFields[i][1]);
-    }
-
-    return self;
-};
+}());

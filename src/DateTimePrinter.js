@@ -1,27 +1,29 @@
-/*globals exports*/
-exports.DateTimePrinter = function (formatters, language, timeZoneOffset) {
-    var DateTimePrinter = exports.DateTimePrinter,
-        lang = language || 'en',
-        offset = (timeZoneOffset !== undefined && timeZoneOffset !== null)
+/*globals exports,extend*/
+exports.DateTimePrinter = (function () {
+    var DateTimePrinter = extend(function (formatters, language, timeZoneOffset) {
+        this.formatters = formatters;
+        this.language = language || 'en';
+        this.offset = (timeZoneOffset !== undefined && timeZoneOffset !== null)
             ? new Date().getTimezoneOffset() * 60 * 1000 - timeZoneOffset
             : undefined;
-
-    return {
+    }, {
         withLanguage: function (language) {
-            return DateTimePrinter(formatters, language, offset);
+            return DateTimePrinter(this.formatters, language, this.offset);
         },
         withTimeZoneOffset: function (offset) {
-            return DateTimePrinter(formatters, language, offset);
+            return DateTimePrinter(this.formatters, this.language, offset);
         },
         print: function (obj) {
             var i, res = '';
-            if (offset !== undefined && obj.plusMillis) {
-                obj = obj.plusMillis(offset);
+            if (this.offset !== undefined && obj.plusMillis) {
+                obj = obj.plusMillis(this.offset);
             }
-            for (i = 0; i < formatters.length; i += 1) {
-                res += formatters[i](obj, lang);
+            for (i = 0; i < this.formatters.length; i += 1) {
+                res += this.formatters[i](obj, this.language);
             }
             return res;
         }
-    };
-};
+    });
+
+    return DateTimePrinter;
+}());
