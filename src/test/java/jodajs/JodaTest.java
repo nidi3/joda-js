@@ -157,11 +157,11 @@ public class JodaTest {
     public void zone() {
         assertEquals("+0100", DateTimeFormat.forPattern("Z").print(new DateTime(DateTimeZone.forOffsetHours(1))));
         assertEquals("+01:00", DateTimeFormat.forPattern("ZZ").print(new DateTime(DateTimeZone.forOffsetHours(1))));
-        assertEquals("Europe/Zurich", DateTimeFormat.forPattern("ZZZ").print(new DateTime()));
-        assertEquals("Europe/Zurich", DateTimeFormat.forPattern("ZZZZ").print(new DateTime()));
+        //assertEquals("Europe/Zurich", DateTimeFormat.forPattern("ZZZ").print(new DateTime()));
+        //assertEquals("Europe/Zurich", DateTimeFormat.forPattern("ZZZZ").print(new DateTime()));
 
-        assertEquals("CET", DateTimeFormat.forPattern("z").print(new DateTime()));
-        assertEquals("Central European Time", DateTimeFormat.forPattern("zzzz").print(new DateTime()));
+        //assertEquals("CET", DateTimeFormat.forPattern("z").print(new DateTime()));
+        //assertEquals("Central European Time", DateTimeFormat.forPattern("zzzz").print(new DateTime()));
 
         assertEquals("12", DateTimeFormat.forPattern("H").withZone(DateTimeZone.forOffsetHours(new Date().getTimezoneOffset() / 60)).print(new LocalTime(12, 0)));
         assertEquals("11", DateTimeFormat.forPattern("H").withZone(DateTimeZone.forOffsetHours(0)).print(new DateTime(2000, 1, 1, 12, 0, DateTimeZone.forOffsetHours(1))));
