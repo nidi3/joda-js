@@ -1,7 +1,7 @@
-/*globals exports,forEach,padLeft,padRight,cutRight,extend*/
+/*globals exports,accessor,forEach,padLeft,padRight,cutRight,extend*/
 exports.DateTimeFormatterBuilder = (function () {
     var proto = {
-            numberFormatter: function (field, minPrinted, maxParsed) {
+            appendNumberFormatter: function (field, minPrinted, maxParsed) {
                 this.parsers.push(function (obj) {
 
                 });
@@ -11,7 +11,7 @@ exports.DateTimeFormatterBuilder = (function () {
                 });
                 return this;
             },
-            fractionFormatter: function (field, minDigits, maxDigits) {
+            appendFractionFormatter: function (field, minDigits, maxDigits) {
                 this.parsers.push(function (obj) {
 
                 });
@@ -21,7 +21,7 @@ exports.DateTimeFormatterBuilder = (function () {
                 });
                 return this;
             },
-            twoDigitYearFormatter: function (field, pivot, lenientParse) {
+            appendTwoDigitYearFormatter: function (field, pivot, lenientParse) {
                 this.parsers.push(function (obj) {
 
                 });
@@ -32,7 +32,7 @@ exports.DateTimeFormatterBuilder = (function () {
                 });
                 return this;
             },
-            textFormatter: function (field, short) {
+            appendTextFormatter: function (field, short) {
                 this.parsers.push(function (obj) {
 
                 });
@@ -42,13 +42,13 @@ exports.DateTimeFormatterBuilder = (function () {
                 });
                 return this;
             },
-            millisOfSecond: function (minDigits) {
-                return this.numberFormatter('millisOfSecond', minDigits, 3);
+            appendMillisOfSecond: function (minDigits) {
+                return this.appendNumberFormatter('millisOfSecond', minDigits, 3);
             },
-            fractionOfSecond: function (minDigits, maxDigits) {
-                return this.fractionFormatter('millis', minDigits, maxDigits);
+            appendFractionOfSecond: function (minDigits, maxDigits) {
+                return this.appendFractionFormatter('millis', minDigits, maxDigits);
             },
-            timeZoneOffset: function (withSeparator) {
+            appendTimeZoneOffset: function (withSeparator) {
                 this.parsers.push(function (obj) {
 
                 });
@@ -61,13 +61,13 @@ exports.DateTimeFormatterBuilder = (function () {
                 });
                 return this;
             },
-            twoDigitYear: function (pivot, lenientParse) {
-                return this.twoDigitYearFormatter('year', pivot, lenientParse);
+            appendTwoDigitYear: function (pivot, lenientParse) {
+                return this.appendTwoDigitYearFormatter('year', pivot, lenientParse);
             },
-            twoDigitWeekyear: function (pivot, lenientParse) {
-                return this.twoDigitYearFormatter('weekyear', pivot, lenientParse);
+            appendTwoDigitWeekyear: function (pivot, lenientParse) {
+                return this.appendTwoDigitYearFormatter('weekyear', pivot, lenientParse);
             },
-            literal: function (text) {
+            appendLiteral: function (text) {
                 this.parsers.push({});
                 this.printers.push(function () {
                     return text;
@@ -89,14 +89,14 @@ exports.DateTimeFormatterBuilder = (function () {
         }, proto);
 
     function addText(target, field, short) {
-        target[field + (short ? 'Short' : '') + 'Text'] = function () {
-            return this.textFormatter(field, short);
+        target[accessor('append', field + (short ? 'Short' : '') + 'Text')] = function () {
+            return this.appendTextFormatter(field, short);
         };
     }
 
     forEach(['secondOfMinute', 'minuteOfHour', 'hourOfDay', 'clockhourOfDay', 'hourOfHalfday', 'clockhourOfHalfday', 'dayOfMonth', 'dayOfWeek', 'dayOfYear', 'monthOfYear', 'weekOfWeekyear', 'weekyear', 'year', 'yearOfEra', 'centuryOfEra'], function (field) {
-        proto[field] = function (minDigits) {
-            return this.numberFormatter(field, minDigits);
+        proto[accessor('append', field)] = function (minDigits) {
+            return this.appendNumberFormatter(field, minDigits);
         };
     });
     forEach([

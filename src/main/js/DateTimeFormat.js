@@ -47,112 +47,112 @@ exports.DateTimeFormat = (function () {
             var tokenLen = token.length,
                 c = token.charAt(0);
             switch (c) {
-            case 'G': // era designator (text)
-                builder.eraText();
+            case 'G':
+                builder.appendEraText();
                 break;
-            case 'C': // century of era (number)
-                builder.centuryOfEra(tokenLen, tokenLen);
+            case 'C':
+                builder.appendCenturyOfEra(tokenLen, tokenLen);
                 break;
-            case 'x': // weekyear (number)
-            case 'y': // year (number)
-            case 'Y': // year of era (number)
+            case 'x':
+            case 'y':
+            case 'Y':
                 if (tokenLen === 2) {
                     // Use pivots which are compatible with SimpleDateFormat.
                     switch (c) {
                     case 'x':
-                        builder.twoDigitWeekyear(exports.LocalDate.now().getWeekyear() - 30);
+                        builder.appendTwoDigitWeekyear(exports.LocalDate.now().getWeekyear() - 30);
                         break;
                     case 'y':
                     case 'Y':
-                        builder.twoDigitYear(exports.LocalDate.now().getYear() - 30);
+                        builder.appendTwoDigitYear(exports.LocalDate.now().getYear() - 30);
                         break;
                     }
                 } else {
                     switch (c) {
                     case 'x':
-                        builder.weekyear(tokenLen, tokenLen);
+                        builder.appendWeekyear(tokenLen, tokenLen);
                         break;
                     case 'y':
-                        builder.year(tokenLen, tokenLen);
+                        builder.appendYear(tokenLen, tokenLen);
                         break;
                     case 'Y':
-                        builder.yearOfEra(tokenLen, tokenLen);
+                        builder.appendYearOfEra(tokenLen, tokenLen);
                         break;
                     }
                 }
                 break;
-            case 'M': // month of year (text and number)
+            case 'M':
                 if (tokenLen >= 3) {
                     if (tokenLen >= 4) {
-                        builder.monthOfYearText();
+                        builder.appendMonthOfYearText();
                     } else {
-                        builder.monthOfYearShortText();
+                        builder.appendMonthOfYearShortText();
                     }
                 } else {
-                    builder.monthOfYear(tokenLen);
+                    builder.appendMonthOfYear(tokenLen);
                 }
                 break;
-            case 'd': // day of month (number)
-                builder.dayOfMonth(tokenLen);
+            case 'd':
+                builder.appendDayOfMonth(tokenLen);
                 break;
-            case 'a': // am/pm marker (text)
-                builder.halfdayOfDayText();
+            case 'a':
+                builder.appendHalfdayOfDayText();
                 break;
-            case 'h': // clockhour of halfday (number, 1..12)
-                builder.clockhourOfHalfday(tokenLen);
+            case 'h':
+                builder.appendClockhourOfHalfday(tokenLen);
                 break;
-            case 'H': // hour of day (number, 0..23)
-                builder.hourOfDay(tokenLen);
+            case 'H':
+                builder.appendHourOfDay(tokenLen);
                 break;
-            case 'k': // clockhour of day (1..24)
-                builder.clockhourOfDay(tokenLen);
+            case 'k':
+                builder.appendClockhourOfDay(tokenLen);
                 break;
-            case 'K': // hour of halfday (0..11)
-                builder.hourOfHalfday(tokenLen);
+            case 'K':
+                builder.appendHourOfHalfday(tokenLen);
                 break;
-            case 'm': // minute of hour (number)
-                builder.minuteOfHour(tokenLen);
+            case 'm':
+                builder.appendMinuteOfHour(tokenLen);
                 break;
-            case 's': // second of minute (number)
-                builder.secondOfMinute(tokenLen);
+            case 's':
+                builder.appendSecondOfMinute(tokenLen);
                 break;
-            case 'S': // fraction of second (number)
-                builder.fractionOfSecond(tokenLen, tokenLen);
+            case 'S':
+                builder.appendFractionOfSecond(tokenLen, tokenLen);
                 break;
-            case 'e': // day of week (number)
-                builder.dayOfWeek(tokenLen);
+            case 'e':
+                builder.appendDayOfWeek(tokenLen);
                 break;
-            case 'E': // dayOfWeek (text)
+            case 'E':
                 if (tokenLen >= 4) {
-                    builder.dayOfWeekText();
+                    builder.appendDayOfWeekText();
                 } else {
-                    builder.dayOfWeekShortText();
+                    builder.appendDayOfWeekShortText();
                 }
                 break;
-            case 'D': // day of year (number)
-                builder.dayOfYear(tokenLen);
+            case 'D':
+                builder.appendDayOfYear(tokenLen);
                 break;
-            case 'w': // week of weekyear (number)
-                builder.weekOfWeekyear(tokenLen);
+            case 'w':
+                builder.appendWeekOfWeekyear(tokenLen);
                 break;
-            case 'z': // time zone (text)
+            case 'z':
                 if (tokenLen >= 4) {
                     //builder.zimeZoneText();
                 } else {
-                    builder.timeZoneShortText();
+                    builder.appendTimeZoneShortText();
                 }
                 break;
-            case 'Z': // time zone offset
+            case 'Z':
                 if (tokenLen === 1) {
-                    builder.timeZoneOffset(false);
+                    builder.appendTimeZoneOffset(false);
                 } else if (tokenLen === 2) {
-                    builder.timeZoneOffset(true);
+                    builder.appendTimeZoneOffset(true);
                 } else {
                     //builder.timeZoneId();
                 }
                 break;
-            case "'": // literal text
-                builder.literal(token.substring(1));
+            case "'":
+                builder.appendLiteral(token.substring(1));
                 break;
             default:
                 throw new Error("Illegal pattern component: " + token);
@@ -171,7 +171,7 @@ exports.DateTimeFormat = (function () {
 
     return {
         forPattern: function (pattern) {
-            var builder = new exports.DateTimeFormatterBuilder();
+            var builder = exports.DateTimeFormatterBuilder();
             parsePatternTo(builder, pattern);
             return builder.toFormatter();
         }

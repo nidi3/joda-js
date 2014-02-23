@@ -1,8 +1,5 @@
 /*globals exports,forEach,map*/
 var localFactory = (function (DateTimeUtils, DateTimeFormat) {
-    function accessor(name, field) {
-        return name + field.substring(0, 1).toUpperCase() + field.substring(1);
-    }
 
     function addGetAndWith(target, field) {
         target[accessor('get', field)] = function () {

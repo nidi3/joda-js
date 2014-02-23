@@ -27,7 +27,7 @@
   THIS SOFTWARE, EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
 */
 
-console={
+console2={
     logs:[],
     log:function(){
         for(var i=0;i<arguments.length;i++){
@@ -157,7 +157,7 @@ console={
 
             // Attach results to the "jasmine" object to make those results easy to scrap/find
             jasmine.runnerResults = {
-                logs:console.getLogs(),
+                //logs:console.getLogs(),
                 suites: [],
                 durationSec : 0,
                 passed : true

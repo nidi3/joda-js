@@ -49,3 +49,7 @@ function padRight(value, len) {
 function cutRight(value, len) {
     return value.substring(0, len);
 }
+
+function accessor(name, field) {
+    return name + field.substring(0, 1).toUpperCase() + field.substring(1);
+}

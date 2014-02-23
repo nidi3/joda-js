@@ -206,7 +206,8 @@ exports.DefaultChronology = (function () {
 
         clockhourOfDay: {
             get: function (date) {
-                return self.hourOfDay.get(date) + 1;
+                var h = self.hourOfDay.get(date);
+                return h === 0 ? 24 : h;
             }
         },
         hourOfHalfday: {

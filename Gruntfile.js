@@ -1,11 +1,17 @@
 module.exports = function (grunt) {
-    var JASMINE_DIR = 'test-jasmine',
+    var SRC_DIR = 'src/main/js',
+        TEST_DIR = 'src/test/js',
+
+        SOURCES = [SRC_DIR + '/Utils.js', SRC_DIR + '/DateTimeUtils.js', SRC_DIR + '/translations.js', SRC_DIR + '/DefaultChronology.js',
+            SRC_DIR + '/DateTimePrinter.js', SRC_DIR + '/DateTimeFormat.js', SRC_DIR + '/DateTimeFormatterBuilder.js',
+            SRC_DIR + '/localFactory.js', SRC_DIR + '/LocalDateTime.js', SRC_DIR + '/LocalDate.js', SRC_DIR + '/LocalTime.js',
+            SRC_DIR + '/JsonFormatter.js'],
+
+        OUT_DIR = 'target',
+        JASMINE_DIR = OUT_DIR + '/jasmine',
         JASMINE_PORT = 9999,
-        DIST_DIR = 'dist',
-        SOURCES = ['src/Utils.js', 'src/DateTimeUtils.js', 'src/translations.js', 'src/DefaultChronology.js',
-            'src/DateTimePrinter.js', 'src/DateTimeFormat.js', 'src/DateTimeFormatterBuilder.js',
-            'src/localFactory.js', 'src/LocalDateTime.js', 'src/LocalDate.js', 'src/LocalTime.js',
-            'src/JsonFormatter.js'],
+        DIST_DIR = OUT_DIR + '/dist',
+        COVERAGE_DIR = OUT_DIR + '/coverage',
 
         browsers = [
             {browserName: "internet explorer", version: "6", platform: "XP"},
@@ -23,7 +29,7 @@ module.exports = function (grunt) {
 
     grunt.initConfig({
         clean: {
-            src: ['bower_components', DIST_DIR, JASMINE_DIR + '/spec', JASMINE_DIR + '/lib']
+            src: ['bower_components', OUT_DIR]
         },
         bower: {
             init: {
@@ -36,7 +42,7 @@ module.exports = function (grunt) {
         uglify: {
             dist: {
                 files: {
-                    'dist/joda-js.js': SOURCES
+                    'target/dist/joda-js.js': SOURCES
                 },
                 options: {
                     mangle: false,
@@ -47,7 +53,7 @@ module.exports = function (grunt) {
             },
             min: {
                 files: {
-                    'dist/joda-js.min.js': SOURCES
+                    'target/dist/joda-js.min.js': SOURCES
                 },
                 options: {
                     report: 'gzip',
@@ -58,11 +64,11 @@ module.exports = function (grunt) {
 
         watch: {
             dist: {
-                files: 'src/*.js',
+                files: SRC_DIR + '/*.js',
                 tasks: 'dist'
             },
             test: {
-                files: 'test/*.js',
+                files: TEST_DIR + '/*.js',
                 tasks: 'copy:test'
             }
         },
@@ -100,21 +106,55 @@ module.exports = function (grunt) {
         copy: {
             dist: {
                 expand: true,
-                cwd: 'src',
+                cwd: SRC_DIR,
                 src: 'translations_*.js',
                 dest: DIST_DIR
             },
-            jasmine: {
+            jasmineLib: {
                 expand: true,
                 cwd: 'bower_components/jasmine/',
                 src: 'lib/jasmine-core/*.*',
                 dest: JASMINE_DIR
             },
+            jasmine: {
+                expand: true,
+                cwd: 'src/test/jasmine',
+                src: '*',
+                dest: JASMINE_DIR
+            },
             test: {
                 expand: true,
-                cwd: 'test/',
+                cwd: TEST_DIR + '/',
                 src: '**/*.js',
                 dest: JASMINE_DIR + '/spec/'
+            },
+            javaTest: {
+                expand: true,
+                cwd: TEST_DIR + '/',
+                src: '*1to1.spec.js',
+                dest: 'target/generated-sources/test/java/jodajs/',
+                rename: function (dest, src) {
+                    return dest + src.replace('1to1.spec.js', 'Test.java');
+                },
+                options: {
+                    process: function (content, name) {
+                        return 'package jodajs;\n' +
+                            'import org.junit.Test;\n' +
+                            'import java.util.Date;\n' +
+                            'import static jodajs.TestUtils.*;\n' +
+                            'import static jodajs.Expectation.*;\n' +
+                            'import org.joda.time.format.DateTimeFormat;\n' +
+                            'import org.joda.time.DateTimeUtils;\n' +
+                            'public class ' + name.substring(name.lastIndexOf('/') + 1, name.length - 12) + 'Test{\n' +
+                            content
+                                .replace(/\ndescribe\(.*?\n/g, '')
+                                .replace(/\n\s+describe\("(.+?)", function /g, '\n@Test public void $1')
+                                .replace(/\n\s*it\(.*/g, '')
+                                .replace(/\n    \}\);/g, '}')
+                                .replace(/\}\);/g, '') +
+                            '}';
+                    }
+                }
             }
         },
 
@@ -127,7 +167,7 @@ module.exports = function (grunt) {
                     appRoot: JASMINE_DIR + '/'
                 },
                 files: {
-                    'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/*.spec.js']
+                    'target/jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/*.spec.js']
 //                    'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/LocalDate.spec.js', JASMINE_DIR + '/spec/LocalDateTime.spec.js', JASMINE_DIR + '/spec/DateTimeUtils.spec.js', JASMINE_DIR + '/spec/DateTimeFormatterBuilder.spec.js']
 //                    'test-jasmine/SpecRunner.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/LocalDate.spec.js'],
 //                    'test-jasmine/SpecRunner3.html': [JASMINE_DIR + '/spec/*Utils.js', JASMINE_DIR + '/spec/LocalDateTime.spec.js'],
@@ -137,14 +177,14 @@ module.exports = function (grunt) {
         },
 
         jasmine: {
-            src: ['test/init.js', SOURCES, 'src/translations_*.js'],
+            src: [SOURCES, SRC_DIR + '/translations_*.js', TEST_DIR + '/*Utils.js'],
             options: {
-                specs: 'test/*.spec.js',
-                helpers: 'test/*Utils.js',
+                specs: TEST_DIR + '/*.spec.js',
+                helpers: [TEST_DIR + '/init.js'],
                 template: require('grunt-template-jasmine-istanbul'),
                 templateOptions: {
-                    coverage: 'coverage/coverage.json',
-                    report: 'coverage',
+                    coverage: COVERAGE_DIR + '/coverage.json',
+                    report: COVERAGE_DIR,
                     thresholds: {
                         lines: 75,
                         statements: 75,
@@ -153,6 +193,10 @@ module.exports = function (grunt) {
                     }
                 }
             }
+        },
+
+        exec: {
+            maven: 'mvn test'
         }
 
     });
@@ -165,7 +209,8 @@ module.exports = function (grunt) {
     grunt.registerTask('default', []);
     grunt.registerTask('dist', ['copy:dist', 'uglify:dist', 'uglify:min']);
     grunt.registerTask('dev', ['watch']);
-    grunt.registerTask('test-prepare', ['init', 'dist', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect']);
+    grunt.registerTask('test-prepare', ['init', 'dist', 'copy:jasmineLib', 'copy:jasmine', 'copy:test', 'sails-linker', 'connect']);
     grunt.registerTask('test-local', ['test-prepare', 'watch']);
-    grunt.registerTask('test', ['test-prepare', 'saucelabs-jasmine']);
+    grunt.registerTask('test-java', ['copy:javaTest', 'exec:maven']);
+    grunt.registerTask('test', ['test-java', 'test-prepare', 'saucelabs-jasmine']);
 };
