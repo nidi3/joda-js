@@ -155,8 +155,8 @@ public class JodaTest {
 
     @Test
     public void zone() {
-        assertEquals("+0100", DateTimeFormat.forPattern("Z").print(new DateTime()));
-        assertEquals("+01:00", DateTimeFormat.forPattern("ZZ").print(new DateTime()));
+        assertEquals("+0100", DateTimeFormat.forPattern("Z").print(new DateTime(DateTimeZone.forOffsetHours(1))));
+        assertEquals("+01:00", DateTimeFormat.forPattern("ZZ").print(new DateTime(DateTimeZone.forOffsetHours(1))));
         assertEquals("Europe/Zurich", DateTimeFormat.forPattern("ZZZ").print(new DateTime()));
         assertEquals("Europe/Zurich", DateTimeFormat.forPattern("ZZZZ").print(new DateTime()));
 
